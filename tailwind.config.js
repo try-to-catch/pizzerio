@@ -13,7 +13,12 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                'serif': ['Roboto Slab', 'serif'],
+                'sans-serif': ['Inter', 'sans-serif'],
             },
+            colors: {
+                'primary': '#FF7010'
+            }
         },
     },
 
