@@ -8,7 +8,7 @@ const {product} = defineProps<{product: IProductCard}>()
 <template>
     <div class="rounded-xl bg-white relative">
         <div v-if="product.status" class="absolute py-[7px] px-[18px] text-sm bg-red-bg text-white uppercase left-0 top-5 rounded-r-md">{{ product.status }}</div>
-        <div class="max:h-300 max:w-300 overflow-hidden">
+        <div class="max:h-300 max:w-300 overflow-hidden flex items-center justify-center">
             <img :alt="product.title" :src="product.thumbnail">
         </div>
         <div class="m-5 mt-4">
