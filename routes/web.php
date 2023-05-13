@@ -18,6 +18,10 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
+})->name('home');
+
+Route::get('/pizza', function () {
+    return Inertia::render('Products/Index');
 });
 
 Route::get('/dashboard', function () {
