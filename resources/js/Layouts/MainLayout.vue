@@ -9,6 +9,7 @@ import {computed, onMounted, onUnmounted, ref} from "vue";
 import {IResizeEventTarget} from "@/types/IResizeEventTarget";
 import CrossIcon from "@/Components/Icons/CrossIcon.vue";
 import MainFooter from "@/Components/MainFooter.vue";
+import {Link} from "@inertiajs/vue3";
 
 const isMenuOpen = ref(false)
 const width = ref(window.innerWidth)
@@ -36,13 +37,16 @@ const isOverlayOpen = computed(() => {
     return width.value < 1024 && isMenuOpen.value
 })
 
+const headerHeight = computed(() => {
+    return window.location.pathname === '/' ? 106 : 66;
+})
 </script>
 
 <template>
     <div class="font-sans-serif w-full min-h-[100vh] flex flex-col justify-between">
         <header class="fixed top-0 right-0 w-full z-30">
             <!--top header-->
-            <div class="bg-white">
+            <div :class="{hidden: $page.url !== '/'}" class="bg-white">
                 <div class="h-10 flex justify-between sm:container sm:mx-auto mx-5">
                     <div class="space-x-10 flex items-center text-sm justify-between lg:justify-start lg:w-auto w-full">
                         <div class="flex items-center">
@@ -74,18 +78,16 @@ const isOverlayOpen = computed(() => {
                         </div>
                     </div>
                 </div>
-
             </div>
-
             <!--bottom header-->
             <div class="border-y border-gray-200 bg-white">
                 <div class="h-16 flex items-center sm:container sm:mx-auto mx-5 justify-between">
                     <div class="flex items-center h-full lg:justify-start justify-between lg:w-auto w-full">
-                        <div class="flex">
+                        <Link :href="route('home')" class="flex">
                             <pizza-icon class="w-8 h-8"/>
                             <span class="ml-3 md:text-xl whitespace-nowrap text-lg">Куда пицца</span>
-                        </div>
-                        <nav class="ml-12 lg:ml-3 xl:ml-12 h-full lg:flex hidden">
+                        </Link>
+                        <nav :class="{'lg:flex': $page.url !== '/'}" class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
                             <ul class="flex h-full">
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
                                     <a class="h-full w-full flex items-center" href="#">Акции</a>
@@ -127,7 +129,7 @@ const isOverlayOpen = computed(() => {
                     <div class="lg:flex hidden">
                         <div class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
-                            <span class="text-white xl:block hidden">
+                            <span :class="[$page.url !== '/'? 'xl:block hidden': 'block']" class="text-white">
                                 0 $
                             </span>
                         </div>
@@ -138,8 +140,8 @@ const isOverlayOpen = computed(() => {
 
         <!--overlay-->
         <transition name="overlay">
-            <nav v-if="isOverlayOpen" :style="{height: height - 106 + 'px'}"
-                 class="lg:hidden fixed top-[106px] right-0 w-full z-20 bg-white">
+            <nav v-if="isOverlayOpen" :style="{height: height - headerHeight + 'px', top: headerHeight + 'px'}"
+                 class="lg:hidden fixed right-0 w-full z-20 bg-white">
                 <div class="py-4 text-center">
                     <a class="text-sm flex items-center sm:container sm:mx-auto mx-5" href="#" @click.prevent>
                         <person-icon/>
@@ -188,7 +190,7 @@ const isOverlayOpen = computed(() => {
             </nav>
         </transition>
 
-        <main class="grow mt-[106px]">
+        <main :style="{marginTop: headerHeight + 'px'}" class="grow">
             <slot/>
         </main>
 
@@ -239,6 +241,6 @@ const isOverlayOpen = computed(() => {
 
 .overlay-enter-from,
 .overlay-leave-to {
-    transform: translateY(calc(-100vh + 106px));
+    transform: translateY(calc(-100vh + 66px));
 }
 </style>
