@@ -17,8 +17,8 @@ import SauceIcon from "@/Components/Icons/SauceIcon.vue";
 
     <main-layout>
         <div class="bg-gray-bg">
-            <div class="py-6 sm:mx-auto sm:container mx-5">
-                <ul class="space-x-[30px] flex overflow-auto py-[6px]" :class="[$style['scrollbar-thin']]" >
+            <div class="lg:py-6 py-[14px] sm:mx-auto sm:container mx-5">
+                <ul class="lg:space-x-[30px] space-x-3 flex overflow-auto py-[6px]" :class="[$style['scrollbar-thin']]" >
                     <li>
                         <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-[135px] lg:h-[104px] h-10 bg-white text-red-bg rounded-xl lg:text-lg text-sm"
                            href="#">
