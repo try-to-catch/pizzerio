@@ -22,7 +22,7 @@ Route::get('/', function () {
 
 Route::get('/pizza', function () {
     return Inertia::render('Products/Index');
-});
+})->name('products');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
