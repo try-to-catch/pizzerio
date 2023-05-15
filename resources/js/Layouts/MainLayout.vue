@@ -118,11 +118,9 @@ const headerHeight = computed(() => {
                                 </li>
                             </ul>
                         </nav>
-                        <div v-if="!isOverlayOpen" class="lg:hidden block" role="button" @click="isMenuOpen = true">
-                            <menu-icon/>
-                        </div>
-                        <div v-if="isOverlayOpen" class="lg:hidden block" role="button" @click="isMenuOpen = false">
-                            <cross-icon class="h-8 w-8"/>
+                        <div class=" block" role="button" @click="isMenuOpen = !isMenuOpen">
+                            <menu-icon v-if="!isOverlayOpen" class="h-8 w-8"/>
+                            <cross-icon v-if="isOverlayOpen" class="h-8 w-8"/>
                         </div>
                     </div>
 
