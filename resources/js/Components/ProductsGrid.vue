@@ -8,7 +8,7 @@ import FilterIcon from "@/Components/Icons/FilterIcon.vue";
     <div>
         <div class="flex justify-between mb-8 items-center">
             <h3 class="text-[40px] leading-[48px] font-semibold">Пицца</h3>
-            <div class="py-[9px] px-4 bg-white flex items-center rounded-md" role="button">
+            <div class="py-[9px] px-4 bg-white flex items-center rounded-md border border-gray-100" role="button">
                 <filter-icon class="mr-2 h-4 w-4"/>
                 Фильтры
             </div>
