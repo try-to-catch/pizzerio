@@ -24,9 +24,13 @@ Route::get('/pizza', function () {
     return Inertia::render('Products/Index');
 })->name('products');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/admin', function () {
+    return Inertia::render('Admin/Dashboard');
+})->name('products');
+
+//Route::get('/dashboard', function () {
+//    return Inertia::render('Dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
