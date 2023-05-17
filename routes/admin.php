@@ -16,26 +16,23 @@ use Inertia\Inertia;
 |
 */
 
+
 Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('home');
+    return Inertia::render('Admin/Dashboard');
+})->name('dashboard');
 
-Route::get('/pizza', function () {
-    return Inertia::render('Products/Index');
-})->name('products');
-
-Route::get('/admin', function () {
+Route::get('/products', function () {
     return Inertia::render('Admin/Dashboard');
 })->name('products');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('categories')->group(function (){
+    Route::get('/', function () {
+        return Inertia::render('Admin/Categories/Index');
+    })->name('categories.index');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/create', function () {
+        return Inertia::render('Admin/Categories/Create');
+    })->name('categories.create');
 });
 
 require __DIR__.'/auth.php';
