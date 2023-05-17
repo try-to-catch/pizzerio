@@ -38,6 +38,8 @@ onMounted(() => {
 onUnmounted(() => {
     removeEventListener('resize', resizeEvent)
 })
+
+const {title} = withDefaults(defineProps<{title?: string}>(), {title: 'Dashboard'})
 </script>
 
 <template>
@@ -55,7 +57,7 @@ onUnmounted(() => {
                     </Link>
                 </div>
 
-                <div class="text-xl font-semibold">Dashboard</div>
+                <div class="text-xl font-semibold">{{ title }}</div>
                 <div class="relative bg-white h-full flex">
                     <button class="flex items-center" @click="isActionListOpen = !isActionListOpen">
                         <img alt="Alex Prover" class="md:w-10 md:h-10 w-8 h-8" src="/images/nice-pizza.png">
@@ -96,14 +98,13 @@ onUnmounted(() => {
             <!--TODO Make a nav with following items: Categories/ Products / Personal / Orders / Dashboard - general statistics  Clients - email notification -->
             <div class="mt-2.5">
                 <nav>
-                    <a href="#">
-                        <SideNavItem :is-side-nav-open="isSideNavOpen" label="Dashboard" short-label="Dash">
+                    <Link :href="route('admin.dashboard')">
+                        <SideNavItem :is-side-nav-open="isSideNavOpen" label="Dashboard" short-label="Dash" url="">
                             <template #icon="{classes}">
                                 <font-awesome-icon :class="classes" :icon="faChartLine"/>
                             </template>
                         </SideNavItem>
-
-                    </a>
+                    </Link>
 
                     <SideNavItem :is-side-nav-open="isSideNavOpen" label="Orders" short-label="Orders">
                         <template #icon="{classes}">
@@ -117,11 +118,13 @@ onUnmounted(() => {
                         </template>
                     </SideNavItem>
 
-                    <SideNavItem :is-side-nav-open="isSideNavOpen" label="Categories" short-label="Categ">
-                        <template #icon="{classes}">
-                            <font-awesome-icon :class="classes" :icon="faFolder"/>
-                        </template>
-                    </SideNavItem>
+                    <Link :href="route('admin.categories.index')">
+                        <SideNavItem :is-side-nav-open="isSideNavOpen" label="Categories" short-label="Categ" :url="route('admin.categories.index',{} ,false)">
+                            <template #icon="{classes}">
+                                <font-awesome-icon :class="classes" :icon="faFolder"/>
+                            </template>
+                        </SideNavItem>
+                    </Link>
 
                     <SideNavItem :is-side-nav-open="isSideNavOpen" label="Clients" short-label="Clients">
                         <template #icon="{classes}">
