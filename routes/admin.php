@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,14 +24,6 @@ Route::get('/products', function () {
     return Inertia::render('Admin/Dashboard');
 })->name('products');
 
-Route::prefix('categories')->group(function (){
-    Route::get('/', function () {
-        return Inertia::render('Admin/Categories/Index');
-    })->name('categories.index');
+Route::resource('categories', CategoryController::class);
 
-    Route::get('/create', function () {
-        return Inertia::render('Admin/Categories/Create');
-    })->name('categories.create');
-});
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
