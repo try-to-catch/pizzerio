@@ -69,12 +69,12 @@ const headerHeight = computed(() => {
                     <div class="space-x-10 text-sm items-center lg:flex hidden">
                         <div>Время работы: с 11:00 до 23:00</div>
                         <div class="">
-                            <a class="text-sm flex items-center" href="#" @click.prevent>
+                            <Link class="text-sm flex items-center" :href="route('login')">
                                 <person-icon/>
                                 <span class="hover:underline ml-2">
                         Войти в аккаунт
                         </span>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -141,12 +141,12 @@ const headerHeight = computed(() => {
             <nav v-if="isOverlayOpen" :style="{height: height - headerHeight + 'px', top: headerHeight + 'px'}"
                  class="lg:hidden fixed right-0 w-full z-20 bg-white">
                 <div class="py-4 text-center">
-                    <a class="text-sm flex items-center sm:container sm:mx-auto mx-5" href="#" @click.prevent>
+                    <Link class="text-sm flex items-center sm:container sm:mx-auto mx-5" :href="route('login')">
                         <person-icon/>
                         <span class="hover:underline ml-4 text-[17px]">
                         Войти в аккаунт
                     </span>
-                    </a>
+                    </Link>
                 </div>
                 <div class="py-2 border-y border-gray-200">
                     <ul class="normal-case flex flex-col sm:container sm:mx-auto mx-5">
