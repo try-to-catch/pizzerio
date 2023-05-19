@@ -1,14 +1,18 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Link} from "@inertiajs/vue3"
+import {ICategory} from "@/types/ICategory";
+
+const {categories} = defineProps<{ categories: ICategory[] }>()
 </script>
 
 <template>
     <admin-layout title="Categories">
         <div class="px-5 pt-10">
             <div class="flex justify-end">
-                <Link :href="route('admin.categories.create')" class="pt-2.5 pb-1.5 px-4 bg-primary text-white rounded-t-md">
+                <Link :href="route('admin.categories.create')"
+                      class="pt-2.5 pb-1.5 px-4 bg-primary text-white rounded-t-md">
                     Create category
                 </Link>
             </div>
@@ -17,39 +21,50 @@ import {Link} from "@inertiajs/vue3"
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3">
+                        <th class="px-6 py-3" scope="col">
                             Icon
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th class="px-6 py-3" scope="col">
                             Title
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th class="px-6 py-3" scope="col">
                             Number of products
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th class="px-6 py-3" scope="col">
+                            Created
+                        </th>
+                        <th class="px-6 py-3" scope="col">
                             Last update
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th class="px-6 py-3" scope="col">
                             Action
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="bg-white border-b">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            <img src="/storage/images/categories/pizza.png" class="h-5 w-5" alt="pizza-icon"/>
+                    <tr v-for="category in categories" :key="category.id" class="bg-white border-b">
+                        <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" scope="row">
+                            <img :alt="`${category.title}icon`" :src="category.icon" class="h-5 w-5"/>
                         </th>
                         <td class="px-6 py-4">
-                            Pizza
+                            <Link :href="route('admin.categories.show', {category: category.slug})">
+                                {{ category.title }}
+                            </Link>
+                        </td>
+                        <td class="px-6 py-4 pl-20">
+                            0
                         </td>
                         <td class="px-6 py-4">
-                            5
+                            {{ category.created_at }}
                         </td>
                         <td class="px-6 py-4">
-                            15.02.2023
+                            {{ category.updated_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <a href="#" class="font-medium text-blue-600">Edit</a>
+                            <Link :href="route('admin.categories.edit', {category: category.slug})"
+                                  class="font-medium text-blue-600 ">
+                                Edit
+                            </Link>
                         </td>
                     </tr>
                     </tbody>
