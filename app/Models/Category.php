@@ -12,6 +12,19 @@ class Category extends Model
 
     protected $fillable = ['title', 'icon'];
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Category $category) {
+            $category->slug = $category->slug ?? str($category->title)->slug();
+        });
+        static::updating(function (Category $category) {
+            $category->slug = str($category->title)->slug();
+        });
+    }
+
+
     public function user(): belongsTo
     {
         return $this->belongsTo(User::class);
