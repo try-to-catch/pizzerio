@@ -15,6 +15,13 @@ class StoreCategoryRequest extends FormRequest
         return auth()->user()->is_admin = true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'title' => ucfirst(strtolower($this->input('title'))),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
