@@ -15,8 +15,12 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-          'title' => $this->title,
-          'icon' => '/storage/'.$this->icon_url,
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'icon' => '/storage/' . $this->icon,
+            'created_at' => $this->created_at->diffForHumans(),
+            'updated_at' => $this->updated_at->diffForHumans()
         ];
     }
 }
