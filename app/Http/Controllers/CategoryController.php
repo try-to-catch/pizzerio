@@ -6,8 +6,8 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,7 +19,9 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Admin/Categories/Index');
+        $categories = Category::query()->select(['id', 'slug', 'title', 'icon', 'created_at', 'updated_at'])->get();
+
+        return Inertia::render('Admin/Categories/Index', ['categories' => CategoryResource::collection($categories)->resolve()]);
     }
 
     /**
@@ -38,16 +40,18 @@ class CategoryController extends Controller
         $data = $request->validated();
         $icon = $request->file('icon');
 
-        $file = Storage::disk('public')->put('/categories', $icon);
+        $file = Storage::disk('public')->put('/images/categories', $icon);
 
-        if (!$file) abort(500);
+        if (!$file) {
+            abort(500);
+        }
 
-         $category = $request->user()->categories()->create([
-             'title' => $data['title'],
-             'icon' => 'images/categories/'.$icon->hashName(),
-         ]);
+        $category = $request->user()->categories()->create([
+            'title' => ucfirst($data['title']),
+            'icon' => 'images/categories/' . $icon->hashName(),
+        ]);
 
-         return redirect()->route('admin.categories.show', ['category' => $category->id]);
+        return redirect()->route('admin.categories.show', ['category' => $category->slug]);
     }
 
     /**
@@ -55,23 +59,61 @@ class CategoryController extends Controller
      */
     public function show(Category $category): Response
     {
-        return Inertia::render('Admin/Categories/Show', ['category' => $category]);
+        $numberOfRelatedProducts = 0;
+
+        return Inertia::render('Admin/Categories/Show', [
+            'category' => CategoryResource::make($category)->resolve(),
+            'numberOfRelatedProducts' => $numberOfRelatedProducts]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Category $category): Response
     {
-        //
+        return Inertia::render('Admin/Categories/Edit', [
+            'category' => CategoryResource::make($category)->resolve()]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response |RedirectResponse
     {
-        //
+        $data = $request->validated();
+        $icon = $request->file('icon');
+
+        $dataForUpdate = [];
+
+        if (isset($icon)) {
+            Storage::disk('public')->delete($category->icon);
+            $file = Storage::disk('public')->put('/images/categories', $icon);
+
+            $dataForUpdate['icon'] = 'images/categories/' . $icon->hashName();
+
+            if (!$file) {
+                abort(500);
+            }
+        }
+
+        if (array_key_exists('title', $data)) {
+            if ($data['title'] !== $category->title) {
+                $dataForUpdate['title'] = ucfirst($data['title']);
+            }
+        }
+
+        if (count($dataForUpdate)) {
+            try {
+
+                $category->updateOrFail($dataForUpdate);
+            } catch (QueryException $e) {
+                return redirect()->back()->withErrors(['title' =>'The title has already been taken.']);
+            }
+        } else {
+            $category->touch();
+        }
+
+        return redirect()->route('admin.categories.show', ['category' => $category->slug]);
     }
 
     /**
