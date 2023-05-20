@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('categories', function (Blueprint $table) {
-             if(app()->isLocal()){
+             if(!app()->isProduction()){
                 $table->dropColumn('slug');
             }
         });
