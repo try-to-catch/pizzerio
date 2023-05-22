@@ -57,7 +57,7 @@ const {title} = withDefaults(defineProps<{title?: string}>(), {title: 'Dashboard
                     </Link>
                 </div>
 
-                <div class="text-xl font-semibold">{{ title }}</div>
+                <div class="text-xl font-semibold sm:block hidden">{{ title }}</div>
                 <div class="relative bg-white h-full flex">
                     <button class="flex items-center" @click="isActionListOpen = !isActionListOpen">
                         <img alt="Alex Prover" class="md:w-10 md:h-10 w-8 h-8" src="/images/nice-pizza.png">
