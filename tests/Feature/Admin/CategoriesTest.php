@@ -102,4 +102,22 @@ class CategoriesTest extends TestCase
 
         Storage::disk('public')->assertExists($category->url);
     }
+
+    public function test_admin_can_delete_category(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $category = Category::factory()->count(1)->create(['user_id' => $user->id])->first();
+        $this->assertDatabaseCount('categories', 1);
+
+        $response = $this->delete("/admin/categories/{$category->slug}");
+        $response->assertRedirect();
+
+        $this->assertDatabaseCount('categories', 0);
+
+        Storage::disk('public')->assertMissing($category->icon);
+    }
 }
