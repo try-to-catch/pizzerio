@@ -1,13 +1,22 @@
 <script lang="ts" setup>
 
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import {Link} from "@inertiajs/vue3"
+import {Head, Link} from "@inertiajs/vue3"
 import {ICategory} from "@/types/ICategory";
+import {onMounted, ref} from "vue";
 
-const {categories} = defineProps<{ categories: ICategory[] }>()
+const {categories, message} = defineProps<{ categories: ICategory[], message?: string }>()
+const isMessageVisible = ref(true)
+
+onMounted(() => {
+    setTimeout(() => isMessageVisible.value = false, 10000)
+})
+
+const hiddeMessage = () => isMessageVisible.value = false
 </script>
 
 <template>
+    <Head><title>Categories</title></Head>
     <admin-layout title="Categories">
         <div class="px-5 pt-10">
             <div class="flex justify-end">
@@ -31,10 +40,10 @@ const {categories} = defineProps<{ categories: ICategory[] }>()
                             Number of products
                         </th>
                         <th class="px-6 py-3" scope="col">
-                            Created
+                            Created By
                         </th>
                         <th class="px-6 py-3" scope="col">
-                            Last update
+                            Last Update
                         </th>
                         <th class="px-6 py-3" scope="col">
                             Action
@@ -55,7 +64,7 @@ const {categories} = defineProps<{ categories: ICategory[] }>()
                             0
                         </td>
                         <td class="px-6 py-4">
-                            {{ category.created_at }}
+                            {{ category.created_by }}
                         </td>
                         <td class="px-6 py-4">
                             {{ category.updated_at }}
@@ -72,5 +81,28 @@ const {categories} = defineProps<{ categories: ICategory[] }>()
             </div>
 
         </div>
+
+        <transition name="flash-message">
+            <div v-if="isMessageVisible && message" class="absolute top-2 w-full flex justify-center"
+                 @click="hiddeMessage">
+                <div class="min-w-[240px] bg-gray-400 shadow-xl text-white h-12  py-3 px-5 rounded-md text-center">
+                    {{ message }}
+                </div>
+            </div>
+        </transition>
     </admin-layout>
 </template>
+
+
+<style>
+.flash-message-enter-active,
+.flash-message-leave-active {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.flash-message-enter-from,
+.flash-message-leave-to {
+    opacity: 0;
+}
+</style>
