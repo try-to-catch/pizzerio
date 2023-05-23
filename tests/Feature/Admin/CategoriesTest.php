@@ -24,7 +24,7 @@ class CategoriesTest extends TestCase
         ]);
     }
 
-    public function test_can_see_index_page(): void
+    public function test_admin_can_see_index_page(): void
     {
         $this->withoutExceptionHandling();
 
@@ -35,7 +35,7 @@ class CategoriesTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_can_see_create_page(): void
+    public function test_admin_can_see_create_page(): void
     {
         $this->withoutExceptionHandling();
 
