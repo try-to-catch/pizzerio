@@ -39,7 +39,7 @@ onUnmounted(() => {
     removeEventListener('resize', resizeEvent)
 })
 
-const {title} = withDefaults(defineProps<{title?: string}>(), {title: 'Dashboard'})
+const {title} = withDefaults(defineProps<{ title?: string }>(), {title: 'Dashboard'})
 </script>
 
 <template>
@@ -95,7 +95,6 @@ const {title} = withDefaults(defineProps<{title?: string}>(), {title: 'Dashboard
                 </Link>
             </div>
 
-            <!--TODO Make a nav with following items: Categories/ Products / Personal / Orders / Dashboard - general statistics  Clients - email notification -->
             <div class="mt-2.5">
                 <nav>
                     <Link :href="route('admin.dashboard')">
@@ -112,14 +111,19 @@ const {title} = withDefaults(defineProps<{title?: string}>(), {title: 'Dashboard
                         </template>
                     </SideNavItem>
 
-                    <SideNavItem :is-side-nav-open="isSideNavOpen" label="Products" short-label="Prod">
-                        <template #icon="{classes}">
-                            <font-awesome-icon :class="classes" :icon="faTag"/>
-                        </template>
-                    </SideNavItem>
+                    <Link :href="route('admin.products.index')">
+                        <SideNavItem :is-side-nav-open="isSideNavOpen" :url="route('admin.products.index',{} ,false)"
+                                     label="Products" short-label="Prod">
+                            <template #icon="{classes}">
+                                <font-awesome-icon :class="classes" :icon="faTag"/>
+                            </template>
+                        </SideNavItem>
+                    </Link>
 
                     <Link :href="route('admin.categories.index')">
-                        <SideNavItem :is-side-nav-open="isSideNavOpen" label="Categories" short-label="Categ" :url="route('admin.categories.index',{} ,false)">
+                        <SideNavItem :is-side-nav-open="isSideNavOpen" :url="route('admin.categories.index',{} ,false)"
+                                     label="Categories"
+                                     short-label="Categ">
                             <template #icon="{classes}">
                                 <font-awesome-icon :class="classes" :icon="faFolder"/>
                             </template>
