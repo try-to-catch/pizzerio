@@ -2,34 +2,51 @@
 
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Head, Link, useForm} from "@inertiajs/vue3";
-import {useField} from "vee-validate"
-import {mixed, string} from 'yup'
+import {mixed, object, string} from 'yup'
+import type {ICategoryFormData} from "@/types/ICategoryFormData";
+import DefaultAdminForm from "@/Components/Form/DefaultAdminForm.vue";
+import {computed} from "vue";
+import InputField from "@/Components/Form/InputField.vue";
+import OrangeButton from "@/Components/Form/OrangeButton.vue";
+import FileInput from "@/Components/Form/FileInput.vue";
 
+const categorySchema = object({
+    title: string().min(3).required(),
+    icon: mixed().required(),
+})
 
-const {errorMessage: titleError, value: titleValue} = useField<string>('title', string().required().min(3))
-const {errorMessage: iconError, value: iconValue} = useField<null | File>('icon', mixed().required())
-
-interface INewCategory {
-    title: string,
-    icon: null | File
-}
-
-const form = useForm<INewCategory>({
+const form = useForm<ICategoryFormData>({
     title: '',
     icon: null
 })
 
 const store = async () => {
-    form.title = titleValue.value
-    form.icon = iconValue.value
-    form.post('/admin/categories')
+    const errors = await categorySchema.validate(form, {abortEarly: false}).catch((errors) => {
+        errors.inner.forEach(error => {
+            const splitError = error.message.split(' ')
+            splitError.shift()
+
+            const formattedMessage = `This ${splitError.join(' ')}`
+            form.setError(error.path, formattedMessage)
+        })
+    });
+
+    if (!errors) {
+        form.post('/admin/categories')
+    }
 }
+
+
+const isDisabled = computed((): boolean => Boolean(form.processing || form.errors))
+
+const loadFile = ($event) => form.icon = $event.target.files[0]
+const clearFormErrors = () => form.clearErrors()
 </script>
 
 <template>
     <Head><title>Categories</title></Head>
     <admin-layout title="Categories - Create">
-        <div class="px-5 xl:px-40 lg:px-28 md:px-16 sm:px-4 pt-10">
+        <div class="xl:w-[900px] lg:w-[720px] md:w-[640px] sm:w-auto sm:mx-5 mx-3 md:mx-auto pt-10">
             <div class="flex justify-end">
                 <Link :href="route('admin.categories.index')"
                       class="pt-2.5 pb-1.5 px-4 bg-gray-300 text-white rounded-t-md">
@@ -37,36 +54,15 @@ const store = async () => {
                 </Link>
             </div>
 
-            <form class="relative overflow-x-auto shadow-md sm:rounded-b-lg px-5 py-3 space-y-4 bg-white"
-                  @submit.prevent="store">
-                <div class="space-x-5">
-                    <label for="title">Title</label>
-                    <input id="title" v-model="titleValue"
-                           :class="{'border border-red-700': titleError || form.errors.title }"
-                           class="rounded-md" name="title" required
-                           type="text"/>
-                    <span v-if="titleError || form.errors.title" class="text-sm text-red-500">
-                        {{ titleError }} {{ form.errors.title }}
-                    </span>
-                </div>
+            <default-admin-form @submit.prevent="store">
+                <input-field id="title" v-model="form.title" :errors="form.errors.title" :required="true"
+                             label="Title"
+                             @input="clearFormErrors"/>
 
-                <div class="space-x-5">
-                    <label for="icon">Icon</label>
-                    <input id="icon" :class="{'border border-red-700': iconError || form.errors.icon }"
-                           accept="image/png"
-                           class="py-2 px-3 w-1/3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                           name="icon"
-                           required
-                           type="file" @input="iconValue = $event.target.files[0]"/>
-                    <span v-if="iconError || form.errors.icon" class="text-sm text-red-500">
-                        {{ iconError }} {{ form.errors.icon }}
-                    </span>
-                </div>
+                <file-input :errors="form.errors.icon" :required="true" @input="loadFile"/>
 
-                <button :disabled="form.processing" class="pt-2.5 pb-1.5 px-4 bg-primary text-white rounded-md"
-                        type="submit">Create
-                </button>
-            </form>
+                <orange-button :disabled="isDisabled">Create</orange-button>
+            </default-admin-form>
         </div>
     </admin-layout>
 </template>
