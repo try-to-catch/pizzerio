@@ -83,7 +83,7 @@ const hiddeMessage = () => isMessageVisible.value = false
         </div>
 
         <transition name="flash-message">
-            <div v-if="isMessageVisible && message" class="absolute top-2 w-full flex justify-center"
+            <div v-if="isMessageVisible && message" class="absolute top-2 w-full flex justify-center cursor-pointer"
                  @click="hiddeMessage">
                 <div class="min-w-[240px] bg-gray-400 shadow-xl text-white h-12  py-3 px-5 rounded-md text-center">
                     {{ message }}
