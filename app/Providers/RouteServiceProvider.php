@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -40,6 +42,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+        });
+
+        Route::bind('category', function ($value) {
+            return Category::where('slug', $value)->firstOrFail();
+        });
+
+        Route::bind('product', function ($value) {
+            return Product::where('slug', $value)->firstOrFail();
         });
     }
 }
