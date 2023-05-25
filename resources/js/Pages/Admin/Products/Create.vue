@@ -7,14 +7,21 @@ import DefaultAdminForm from "@/Components/Form/DefaultAdminForm.vue";
 import InputField from "@/Components/Form/InputField.vue";
 import OrangeButton from "@/Components/Form/OrangeButton.vue";
 import type {IProductFormData} from "@/types/IProductFormData";
-import {computed, ref} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import FileInput from "@/Components/Form/FileInput.vue";
 import CheckBox from "@/Components/Form/ToggleCheckBox.vue";
 import DecimalInput from "@/Components/Form/DecimalInput.vue";
 import TextArea from "@/Components/Form/TextArea.vue";
+import SelectBox from "@/Components/Form/SelectBox.vue";
 
-const props = defineProps<{ categories: {id: number, title: string, icon: string}[] }>()
-console.log(props)
+const {categories} = defineProps<{ categories: { id: number, title: string }[] }>()
+
+const preparedCategories = computed(() => {
+    return categories.map(category => {
+        return {label: category.title, value: category.id}
+    })
+})
+
 const {productSchema} = useProduct()
 
 const form = useForm<IProductFormData>({
@@ -31,7 +38,7 @@ const form = useForm<IProductFormData>({
 })
 
 const store = async () => {
-    const errors = await productSchema.validate(form, {abortEarly: false}).catch((errors) => {
+    await productSchema.validate(form, {abortEarly: false}).catch((errors) => {
         errors.inner.forEach(error => {
             const splitError = error.message.split(' ')
             splitError.shift()
@@ -41,14 +48,14 @@ const store = async () => {
         })
     });
 
-    console.log('ok')
-    if (!errors) {
-        // form.post('/admin/categories')
+    if (!form.hasErrors) {
+        console.log('ok')
+        form.post('/admin/products')
     }
 }
 
 const isDisabled = computed((): boolean => {
-    return Boolean(form.processing || form.errors)
+    return Boolean(form.processing || form.hasErrors)
 })
 
 const loadFile = ($event) => form.thumbnail = $event.target.files[0]
@@ -56,6 +63,18 @@ const clearFieldError = (field) => form.clearErrors(field)
 
 const hasDiscountPrice = ref(false)
 const hasBanner = ref(false)
+
+watchEffect(() => {
+    if (!hasDiscountPrice.value) {
+        form.sale_price = null
+    }
+})
+
+watchEffect(() => {
+    if (!hasBanner.value) {
+        form.banner = null
+    }
+})
 </script>
 
 <template>
@@ -83,6 +102,10 @@ const hasBanner = ref(false)
                            :required="true"
                            label="Description" @input="clearFieldError('description')"/>
 
+                <select-box id="category_id" v-model="form.category_id" :options="preparedCategories" :required="true"
+                            label="Relate to" start-option-label="Choose the category"
+                            @input="clearFieldError('category_id')"/>
+
                 <div :class="{'sm:grid-cols-2': hasDiscountPrice}" class="grid gap-4">
                     <decimal-input id="price" v-model="form.price" :errors="form.errors.price"
                                    :required="true" label="Price"
@@ -106,14 +129,15 @@ const hasBanner = ref(false)
 
 
                 <file-input id="thumbnail" :errors="form.errors.thumbnail" :required="true" accept="image/*"
-                            label="Thumbnail"
+                            label="Thumbnail" @change="clearFieldError('thumbnail')"
                             @input="loadFile"/>
+
                 <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <check-box v-model="form.is_for_sale" label="Is product for sale?"/>
                     <check-box v-model="hasDiscountPrice" label="Has discount price?"/>
                     <check-box v-model="hasBanner" label="Has banner?"/>
                 </div>
-                <orange-button :disabled="form.hasErrors || form.processing">Create</orange-button>
+                <orange-button :disabled="isDisabled">Create</orange-button>
             </default-admin-form>
         </div>
     </admin-layout>
