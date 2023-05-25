@@ -17,7 +17,6 @@ class CategoryMinResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'icon' => '/storage/' . $this->icon,
         ];
     }
 }
