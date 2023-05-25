@@ -31,13 +31,13 @@ const store = async () => {
         })
     });
 
-    if (!errors) {
+    if (!form.hasErrors) {
         form.post('/admin/categories')
     }
 }
 
 
-const isDisabled = computed((): boolean => Boolean(form.processing || form.errors))
+const isDisabled = computed((): boolean => Boolean(form.processing || form.hasErrors))
 
 const loadFile = ($event) => form.icon = $event.target.files[0]
 const clearFormErrors = () => form.clearErrors()
