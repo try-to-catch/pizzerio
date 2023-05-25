@@ -25,7 +25,6 @@ defineEmits<{ 'update:ModelValue': (value: string) => void }>()
             <span v-if="errors" :class="$style['capitalize-first']" class="text-sm text-red-500">{{ errors }}</span>
         </div>
         <input :id="id" :class="{'border border-red-700': errors }"
-               :name="id"
                :required="required"
                :step="step"
                :value="modelValue"

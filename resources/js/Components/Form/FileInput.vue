@@ -18,7 +18,6 @@ withDefaults(defineProps<{
         </div>
         <input :id="id" :accept="accept"
                :class="{'border border-red-700': errors}"
-               :name="id"
                :required="required" accept="image/png,jpg"
                class="w-full py-2 px-3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
                type="file"/>
