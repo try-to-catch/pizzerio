@@ -28,7 +28,7 @@ return new class extends Migration {
 
             $table->boolean('is_for_sale')->default(false);
 
-            $table->string('banner')->default(false);
+            $table->string('banner')->default(false)->nullable();
 
             $table->foreignIdFor(Category::class)
                 ->constrained()
