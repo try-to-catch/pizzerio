@@ -31,7 +31,7 @@ class StoreProductRequest extends FormRequest
             'ingredients' => ['required', 'string', 'min:20'],
             'is_for_sale' => ['required', 'boolean'],
             'price' => ['required', 'decimal:0,2'],
-            'sale_price' => ['integer', 'decimal:0,2', 'nullable'],
+            'sale_price' => ['decimal:0,2', 'nullable'],
             'priority' => ['required', 'integer', 'between:0,999'],
             'thumbnail' => ['required', 'image', 'dimensions:min_width=450,min_height=450'],
         ];
