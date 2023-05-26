@@ -5,17 +5,33 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\Category\CategoryMinResource;
+use App\Http\Resources\Product\ProductIndexResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
     public function index(): Response
     {
 
-        return Inertia::render('Admin/Products/Index');
+        $products = Product::query()
+            ->select('products.id', 'products.slug', 'products.title', 'products.price', 'products.thumbnail', 'products.updated_at', 'users.email as user_email', 'categories.title as category_title', 'categories.slug as category_slug')
+            ->join('users', 'users.id', '=', 'products.user_id')
+            ->join('categories', 'categories.id', '=', 'products.category_id')
+            ->get();
+
+        $dataForResponse['products'] = ProductIndexResource::collection($products)->resolve();
+
+        $message = session('message');
+        if ($message) {
+            $dataForResponse['message'] = $message;
+        }
+
+        return Inertia::render('Admin/Products/Index', $dataForResponse);
     }
 
     public function create(): Response
@@ -29,9 +45,34 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
-        //
+        $data = $request->validated();
+        $thumbnail = $request->file('thumbnail');
+
+        $fileName = $thumbnail->hashName();
+        $filePath = "images/products/";
+        $fullFilePath = "storage/" . $filePath;
+
+        if (!file_exists($fullFilePath)) {
+            mkdir($fullFilePath, 666, true);
+        }
+
+        $resizedThumbnail = Image::make($thumbnail)
+            ->fit(450, 450)
+            ->save($fullFilePath . $fileName);
+
+
+        if (!$resizedThumbnail) {
+            abort(500);
+        }
+
+        $data['title'] = ucfirst($data['title']);
+        $data['thumbnail'] = $filePath . $fileName;
+
+        $product = $request->user()->products()->create($data);
+
+        return redirect()->route('admin.products.index');
     }
 
     /**
