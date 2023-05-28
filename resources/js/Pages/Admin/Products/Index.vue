@@ -1,33 +1,47 @@
 <script lang="ts" setup>
 
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import {Head, Link} from "@inertiajs/vue3"
+import {Head, Link, router} from "@inertiajs/vue3"
 import OrangeButton from "@/Components/Form/OrangeButton.vue";
 import FlashMessage from "@/Components/FlashMessage.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faCircleCheck, faCircleXmark, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {ref} from "vue";
+import {IProduct} from "@/types/IProduct";
+import DefaultPagination from "@/Components/DefaultPagination.vue";
 
-interface IProduct {
-    id: number,
-    slug: string,
-    title: string,
-    price: number,
-    thumbnail: string,
-    updated_at: string,
-    created_by?: string,
-    category_title: string,
-    category_slug: string,
+interface IProductPagination extends IPagination {
+    data: IProduct[];
 }
 
-const {products, message} = defineProps<{ products: IProduct[], message?: string }>()
+const props = defineProps<{ products: IProductPagination, message?: string }>()
+
+console.log(props)
+const searchField = ref('')
+
+const filterProducts = () => {
+    const searchString = searchField.value
+
+    setTimeout(() => {
+        if (searchField.value === searchString) {
+            router.reload({
+                data: {
+                    s: searchString
+                }
+            })
+        }
+    }, 1500)
+}
 
 </script>
 
 <template>
-    <Head><title>Categories</title></Head>
-    <admin-layout title="Categories">
-        <div class="px-5 pt-10">
+    <Head><title>Products</title></Head>
+    <admin-layout title="Products">
+        <div class="px-5 pt-10 flex flex-col">
 
-            <div class="flex justify-between pb-4">
-                <div class="">
+            <div class="flex items-center justify-between pb-4">
+                <div class="sm:w-80 grow sm:grow-0">
                     <div class="bg-white">
                         <label class="sr-only" for="table-search">Search</label>
                         <div class="relative mt-1">
@@ -39,16 +53,19 @@ const {products, message} = defineProps<{ products: IProduct[], message?: string
                                           fill-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <input id="table-search"
-                                   class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                            <input id="table-search" v-model="searchField"
+                                   class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                                    placeholder="Search for items"
-                                   type="text">
+                                   type="text"
+                                   @input="filterProducts">
                         </div>
                     </div>
                 </div>
-                <Link :href="route('admin.products.create')"
-                >
-                    <orange-button>Create product</orange-button>
+                <Link :href="route('admin.products.create')" class="ml-5">
+                    <orange-button class="sm:block hidden">Create product</orange-button>
+                    <orange-button class="sm:hidden">
+                        <font-awesome-icon :icon="faPlus"/>
+                    </orange-button>
                 </Link>
             </div>
 
@@ -66,7 +83,7 @@ const {products, message} = defineProps<{ products: IProduct[], message?: string
                             Price
                         </th>
                         <th class="px-6 py-3" scope="col">
-                            Number of orders
+                            Orders
                         </th>
                         <th class="px-6 py-3" scope="col">
                             Category title
@@ -77,23 +94,26 @@ const {products, message} = defineProps<{ products: IProduct[], message?: string
                         <th class="px-6 py-3" scope="col">
                             Last Update
                         </th>
+                        <th class="px-6 py-3" scope="col">
+                            For sale
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    <tr v-for="product in products" :key="product.id" class="bg-white border-b">
+                    <tr v-for="product in products.data" :key="product.id" class="bg-white border-b">
                         <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" scope="row">
-                            <img :alt="`${product.title} thumbnail`" :src="product.thumbnail" class="h-5 w-5"/>
+                            <img :alt="`${product.title} thumbnail`" :src="product.thumbnail" class="h-20 w-20"/>
                         </th>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 capitalize font-semibold">
                             <Link :href="route('admin.products.show', {product: product.slug})">
                                 {{ product.title }}
                             </Link>
                         </td>
                         <td class="px-6 py-4">
-                            {{product.price}} $
+                            {{ product.price }} $
                         </td>
-                        <td class="px-6 py-4 pl-20">
+                        <td class="px-6 py-4">
                             0
                         </td>
                         <td class="px-6 py-4">
@@ -107,10 +127,17 @@ const {products, message} = defineProps<{ products: IProduct[], message?: string
                         <td class="px-6 py-4">
                             {{ product.updated_at }}
                         </td>
+                        <td class="px-6 py-4">
+                            <font-awesome-icon v-if="product.is_for_sale" :icon="faCircleCheck" class="text-green-500"
+                                               size="lg"/>
+                            <font-awesome-icon v-if="!product.is_for_sale" :icon="faCircleXmark" class="text-red-500"
+                                               size="lg"/>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+            <default-pagination :links="products.links" class="self-center mt-4 mb-8"/>
         </div>
 
         <flash-message :message="message"/>
