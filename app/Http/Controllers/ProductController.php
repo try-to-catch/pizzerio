@@ -23,7 +23,7 @@ class ProductController extends Controller
         $searchQuery = $request->only('s');
         $parsedSearch = array_shift($searchQuery);
 
-        if (gettype($parsedSearch) !== 'string') {
+        if (gettype($parsedSearch) !== 'string' && gettype($parsedSearch) !== 'NULL') {
             abort(400);
         }
 
