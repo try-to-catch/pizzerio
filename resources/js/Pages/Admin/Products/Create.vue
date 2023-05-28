@@ -78,11 +78,11 @@ watchEffect(() => {
 </script>
 
 <template>
-    <Head><title>Categories</title></Head>
+    <Head><title>Products</title></Head>
     <admin-layout title="Products - Create">
         <div class="xl:w-[900px] lg:w-[720px] md:w-[640px] sm:w-auto sm:mx-5 mx-3 md:mx-auto pt-10">
             <div class="flex justify-end">
-                <Link :href="route('admin.categories.index')"
+                <Link :href="route('admin.products.index')"
                       class="pt-2.5 pb-1.5 px-4 bg-gray-300 text-white rounded-t-md">
                     Go back
                 </Link>
