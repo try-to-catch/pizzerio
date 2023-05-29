@@ -22,9 +22,13 @@ class ProductIndexResource extends JsonResource
             'is_for_sale' => $this->is_for_sale,
             'thumbnail' => '/storage/' . $this->thumbnail,
             'updated_at' => $this->updated_at->diffForHumans(),
-            'created_by' => $this->user_email,
-            'category_title' => $this->category_title,
-            'category_slug' => $this->category_slug
+            'user' => [
+                'email' => $this->user_email
+            ],
+            'category' => [
+                'category_title' => $this->category_title,
+                'category_slug' => $this->category_slug
+            ]
         ];
     }
 }

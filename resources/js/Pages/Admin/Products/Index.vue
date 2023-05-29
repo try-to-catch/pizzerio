@@ -121,12 +121,12 @@ onMounted(() => {
                             0
                         </td>
                         <td class="px-6 py-4">
-                            <Link :href="route('admin.categories.show', {category: product.category_slug})">
-                                {{ product.category_title }}
+                            <Link :href="route('admin.categories.show', {category: product.category.slug})">
+                                {{ product.category.title }}
                             </Link>
                         </td>
                         <td class="px-6 py-4">
-                            {{ product.created_by }}
+                            {{ product.user.email }}
                         </td>
                         <td class="px-6 py-4">
                             {{ product.updated_at }}

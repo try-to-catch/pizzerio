@@ -6,7 +6,15 @@ export interface IProduct {
     is_for_sale: boolean;
     thumbnail: string;
     readonly updated_at: string;
-    readonly category_title: string;
-    readonly category_slug: string;
-    readonly created_by?: string;
+    readonly category: ICategory;
+    readonly user?: IUserWithEmail;
+}
+
+interface IUserWithEmail {
+    readonly email: string;
+}
+
+interface ICategory {
+    readonly title: string;
+    readonly slug: string;
 }
