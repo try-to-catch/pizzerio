@@ -6,7 +6,7 @@ import OrangeButton from "@/Components/Form/OrangeButton.vue";
 import FlashMessage from "@/Components/FlashMessage.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faCircleCheck, faCircleXmark, faPlus} from "@fortawesome/free-solid-svg-icons";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {IProduct} from "@/types/IProduct";
 import DefaultPagination from "@/Components/DefaultPagination.vue";
 
@@ -16,7 +16,6 @@ interface IProductPagination extends IPagination {
 
 const props = defineProps<{ products: IProductPagination, message?: string }>()
 
-console.log(props)
 const searchField = ref('')
 
 const filterProducts = () => {
@@ -30,9 +29,14 @@ const filterProducts = () => {
                 }
             })
         }
-    }, 1500)
+    }, 1250)
 }
 
+onMounted(() => {
+    const url = new URL(window.location.href)
+
+    searchField.value = url.searchParams.get('s')
+})
 </script>
 
 <template>
