@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\Category\CategoryMinResource;
 use App\Http\Resources\Product\ProductIndexResource;
+use App\Http\Resources\Product\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
@@ -87,15 +88,27 @@ class ProductController extends Controller
 
         $product = $request->user()->products()->create($data);
 
-        return redirect()->route('admin.products.index');
+        return redirect()->route('admin.products.show', ['product' => $product->slug]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Product $product): Response
     {
-        //
+        $product->load([
+            'user' => function ($query) {
+                $query->select('id', 'email');
+            },
+            'category' => function ($query) {
+                $query->select('id', 'slug', 'title');
+            }
+        ]);
+
+        return Inertia::render('Admin/Products/Show', [
+            'product' => ProductResource::make($product)->resolve(),
+            'number_of_related_orders' => 0
+        ]);
     }
 
     /**
