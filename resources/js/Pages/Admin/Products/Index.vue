@@ -5,10 +5,11 @@ import {Head, Link, router} from "@inertiajs/vue3"
 import OrangeButton from "@/Components/Form/OrangeButton.vue";
 import FlashMessage from "@/Components/FlashMessage.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faCircleCheck, faCircleXmark, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {onMounted, ref} from "vue";
 import type {IProduct} from "@/types/IProduct";
 import DefaultPagination from "@/Components/DefaultPagination.vue";
+import StatusIcon from "@/Components/StatusIcon.vue";
 
 interface IProductPagination extends IPagination {
     data: IProduct[];
@@ -132,10 +133,7 @@ onMounted(() => {
                             {{ product.updated_at }}
                         </td>
                         <td class="px-6 py-4">
-                            <font-awesome-icon v-if="product.is_for_sale" :icon="faCircleCheck" class="text-green-500"
-                                               size="lg"/>
-                            <font-awesome-icon v-if="!product.is_for_sale" :icon="faCircleXmark" class="text-red-500"
-                                               size="lg"/>
+                            <status-icon :is-success="product.is_for_sale"/>
                         </td>
                     </tr>
                     </tbody>
