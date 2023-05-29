@@ -26,8 +26,8 @@ class ProductIndexResource extends JsonResource
                 'email' => $this->user_email
             ],
             'category' => [
-                'category_title' => $this->category_title,
-                'category_slug' => $this->category_slug
+                'title' => $this->category_title,
+                'slug' => $this->category_slug
             ]
         ];
     }
