@@ -21,7 +21,7 @@ const form = useForm<ICategoryFormData>({
 })
 
 const store = async () => {
-    const errors = await categorySchema.validate(form, {abortEarly: false}).catch((errors) => {
+    await categorySchema.validate(form, {abortEarly: false}).catch((errors) => {
         errors.inner.forEach(error => {
             const splitError = error.message.split(' ')
             splitError.shift()
@@ -54,7 +54,7 @@ const clearFormErrors = () => form.clearErrors()
                 </Link>
             </div>
 
-            <default-admin-form @submit.prevent="store">
+            <default-admin-form class="mb-8" @submit.prevent="store">
                 <input-field id="title" v-model="form.title" :errors="form.errors.title" :required="true"
                              label="Title"
                              @input="clearFormErrors"/>

@@ -59,7 +59,7 @@ const clearFormErrors = () => form.clearErrors()
                 </Link>
             </div>
 
-            <default-admin-form @submit.prevent="update">
+            <default-admin-form class="mb-8" @submit.prevent="update">
                 <input-field id="title" v-model="form.title" :errors="form.errors.title" label="Title"
                              @input="clearFormErrors"/>
 
