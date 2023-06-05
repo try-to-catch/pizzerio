@@ -45,7 +45,14 @@ class CategoryController extends Controller
         $data = $request->validated();
         $icon = $request->file('icon');
 
-        $file = Storage::disk('public')->put('/images/categories', $icon);
+        $filePath = "images/categories/";
+        $pathFromStorage = "storage/" . $filePath;
+
+        if (!file_exists($pathFromStorage)) {
+            mkdir($pathFromStorage, 666, true);
+        }
+
+        $file = Storage::disk('public')->put($filePath, $icon);
 
         if (!$file) {
             abort(500);
@@ -53,7 +60,7 @@ class CategoryController extends Controller
 
         $category = $request->user()->categories()->create([
             'title' => ucfirst($data['title']),
-            'icon' => 'images/categories/' . $icon->hashName(),
+            'icon' => $filePath . $icon->hashName(),
         ]);
 
         return redirect()->route('admin.categories.show', ['category' => $category->slug]);
@@ -108,15 +115,10 @@ class CategoryController extends Controller
             }
         }
 
-        if (count($dataForUpdate)) {
-            try {
-
-                $category->updateOrFail($dataForUpdate);
-            } catch (QueryException $e) {
-                return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
-            }
-        } else {
-            $category->touch();
+        try {
+            $category->updateOrFail($dataForUpdate);
+        } catch (QueryException $e) {
+            return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
         }
 
         return redirect()->route('admin.categories.show', ['category' => $category->slug]);
