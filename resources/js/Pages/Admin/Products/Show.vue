@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import {Head, Link} from "@inertiajs/vue3";
+import {Head, Link, router} from "@inertiajs/vue3";
 import type {IExtendedProduct} from "@/types/IExtendedProduct";
 import {computed} from "vue";
 import StatusIcon from "@/Components/StatusIcon.vue";
@@ -10,9 +10,8 @@ const {product, number_of_related_orders} = defineProps<{
     number_of_related_orders: number
 }>()
 
-console.log(product, number_of_related_orders)
 const deleteProduct = () => {
-    // router.delete(`/admin/categories/${category.slug}`)
+    router.delete(`/admin/products/${product.slug}`)
 }
 
 const formattedSalePrice = computed(() => {
@@ -25,7 +24,7 @@ const formattedSalePrice = computed(() => {
 
 <template>
     <Head><title>Categories</title></Head>
-    <admin-layout :title="`Categories -`">
+    <admin-layout :title="`Categories - ${product.title}`">
         <div class="px-5 pt-10">
             <div class="flex justify-end">
                 <Link :href="route('admin.products.edit', {product: product.slug})"
