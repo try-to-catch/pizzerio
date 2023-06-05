@@ -9,5 +9,5 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faCircleCheck, faCircleXmark} from "@fortawesome/free-solid-svg-icons";
 
-withDefaults(defineProps<{ isSuccess: boolean, size: string }>(), {size: 'lg'})
+withDefaults(defineProps<{ isSuccess: boolean, size?: string }>(), {size: 'lg'})
 </script>
