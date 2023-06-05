@@ -70,7 +70,7 @@ class CategoriesTest extends TestCase
             'icon' => $category->icon,
         ]);
 
-        Storage::disk('public')->assertExists($category->url);
+        Storage::disk('public')->assertExists($category->icon);
     }
 
     public function test_admin_can_edit_category(): void
@@ -100,7 +100,7 @@ class CategoriesTest extends TestCase
             'icon' => $category->icon,
         ]);
 
-        Storage::disk('public')->assertExists($category->url);
+        Storage::disk('public')->assertExists($category->icon);
     }
 
     public function test_admin_can_delete_category(): void
