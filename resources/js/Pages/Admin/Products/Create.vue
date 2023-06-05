@@ -49,7 +49,6 @@ const store = async () => {
     });
 
     if (!form.hasErrors) {
-        console.log('ok')
         form.post('/admin/products')
     }
 }

@@ -34,7 +34,7 @@ const update = async () => {
         })
     });
 
-    if (!errors) {
+    if (!form.hasErrors) {
         form.post(`/admin/categories/${category.slug}`)
 
     }
