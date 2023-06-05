@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Product\StoreThumbnailAction;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\Category\CategoryMinResource;
+use App\Http\Resources\Product\ProductEditResource;
 use App\Http\Resources\Product\ProductIndexResource;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -52,48 +57,28 @@ class ProductController extends Controller
 
     public function create(): Response
     {
-        $categories = Category::all(['id', 'title', 'thumbnail']);
-        $preparedCategories = CategoryMinResource::collection($categories)->resolve();
+        $categories = Category::all(['id', 'title']);
 
-        return Inertia::render('Admin/Products/Create', ['categories' => $preparedCategories]);
+        return Inertia::render('Admin/Products/Create', [
+            'categories' => CategoryMinResource::collection($categories)->resolve()
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProductRequest $request): RedirectResponse
+
+    public function store(StoreProductRequest $request, StoreThumbnailAction $storeThumbnailAction): RedirectResponse
     {
         $data = $request->validated();
         $thumbnail = $request->file('thumbnail');
 
-        $fileName = $thumbnail->hashName();
-        $filePath = "images/products/";
-        $fullFilePath = "storage/" . $filePath;
-
-        if (!file_exists($fullFilePath)) {
-            mkdir($fullFilePath, 666, true);
-        }
-
-        $resizedThumbnail = Image::make($thumbnail)
-            ->fit(450, 450)
-            ->save($fullFilePath . $fileName);
-
-
-        if (!$resizedThumbnail) {
-            abort(500);
-        }
-
         $data['title'] = ucfirst($data['title']);
-        $data['thumbnail'] = $filePath . $fileName;
+        $data['thumbnail'] = $storeThumbnailAction->handle($thumbnail);;
 
         $product = $request->user()->products()->create($data);
 
         return redirect()->route('admin.products.show', ['product' => $product->slug]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Product $product): Response
     {
         $product->load([
@@ -111,27 +96,58 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
+
+    public function edit(Product $product): Response
     {
-        //
+        $categories = Category::all(['id', 'title']);
+
+        return Inertia::render('Admin/Products/Edit',
+            [
+                'product' => ProductEditResource::make($product)->resolve(),
+                'categories' => CategoryMinResource::collection($categories)->resolve()
+            ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProductRequest $request, Product $product)
+
+    public function update(UpdateProductRequest $request, Product $product, StoreThumbnailAction $storeThumbnailAction):
+    \Illuminate\Contracts\Foundation\Application|ResponseFactory|Application|\Illuminate\Http\Response|RedirectResponse
     {
-        //
+        $data = $request->validated();
+        $thumbnail = $request->file('thumbnail');
+        unset($data['thumbnail']);
+
+        if (isset($thumbnail)) {
+            Storage::disk('public')->delete($product->thumbnail);
+
+            $data['thumbnail'] = $storeThumbnailAction->handle($thumbnail);
+        }
+
+        if (array_key_exists('title', $data)) {
+            $data['title'] = ucfirst($data['title']);
+
+            if ($data['title'] === $product->title) {
+                unset($data['title']);
+            }
+        }
+        try {
+            $product->updateOrFail($data);
+        } catch (QueryException $e) {
+            return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
+        }
+
+        return redirect()->route('admin.products.show', ['product' => $product->slug]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
+
+    public function destroy(Product $product):
+    \Illuminate\Contracts\Foundation\Application|ResponseFactory|Application|\Illuminate\Http\Response|RedirectResponse
     {
-        //
+        Storage::disk('public')->delete($product->thumbnail);
+        if ($product->delete()) {
+            return redirect()->route('admin.products.index')->with(['message' => 'The product has been deleted successfully']);
+        }
+
+        return redirect()->back()
+            ->withErrors(['message' => 'Something went wrong. Try again later or contact tech support']);
     }
 }
