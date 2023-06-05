@@ -19,7 +19,7 @@ class ProductIndexResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'price' => $this->price,
-            'is_for_sale' => $this->is_for_sale,
+            'is_for_sale' => (bool)$this->is_for_sale,
             'thumbnail' => '/storage/' . $this->thumbnail,
             'updated_at' => $this->updated_at->diffForHumans(),
             'user' => [
