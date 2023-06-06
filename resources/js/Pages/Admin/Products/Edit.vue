@@ -26,7 +26,7 @@ const {categories, product} = defineProps<{
 
 
 const form = useForm<IProductFormDataExtended>({...product, thumbnail: null, _method: "patch"})
-console.log(form.category_id)
+
 const {productSchema} = useProduct()
 const store = async () => {
     await productSchema.validate(form, {abortEarly: false}).catch((errors) => {
@@ -40,7 +40,6 @@ const store = async () => {
     });
 
     if (!form.hasErrors) {
-        console.log(form.data())
         form.post(`/admin/products/${product.slug}`)
     }
 }
