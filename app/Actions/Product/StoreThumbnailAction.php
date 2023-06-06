@@ -4,30 +4,26 @@ namespace App\Actions\Product;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
-use Intervention\Image\Exception\NotWritableException;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Exception\NotSupportedException;
 use Intervention\Image\Facades\Image;
 
 class StoreThumbnailAction
 {
     public function handle(UploadedFile $thumbnail): string
     {
-        $fileName = $thumbnail->hashName();
         $filePath = "images/products/";
-        $pathFromStorage = "storage/" . $filePath;
-
-        if (!file_exists($pathFromStorage)) {
-            mkdir($pathFromStorage, 666, true);
-        }
+        $fullPath = $filePath.$thumbnail->hashName();
 
         try {
-            Image::make($thumbnail)
-                ->fit(450, 450)
-                ->save($pathFromStorage . $fileName);
-        } catch (NotWritableException $e) {
+            $image = Image::make($thumbnail)->fit(450, 450)->encode();
+
+            Storage::disk('public')->put($fullPath, $image);
+        } catch (NotSupportedException $e) {
             Log::alert($e);
             abort(500);
         }
 
-        return $filePath . $fileName;
+        return $fullPath;
     }
 }
