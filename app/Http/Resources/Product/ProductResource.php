@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\Category\CategorySlugAndTitleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,10 +32,7 @@ class ProductResource extends JsonResource
             'user' => [
                 'email' => $this->user->email
             ],
-            'category' => [
-                'title' => $this->category->title,
-                'slug' => $this->category->slug
-            ]
+            'category' => CategorySlugAndTitleResource::make($this->category)->resolve()
         ];
     }
 }

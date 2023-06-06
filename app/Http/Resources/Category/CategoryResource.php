@@ -20,6 +20,7 @@ class CategoryResource extends JsonResource
             'title' => $this->title,
             'icon' => '/storage/' . $this->icon,
             'created_by' => $this->email,
+            'number_of_related_products' => $this->products_count,
             'created_at' => $this->created_at->diffForHumans(),
             'updated_at' => $this->updated_at->diffForHumans()
         ];
