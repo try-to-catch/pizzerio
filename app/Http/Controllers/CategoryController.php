@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Category\StoreIconAction;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Category\CategorySlugAndTitleResource;
 use App\Models\Category;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\QueryException;
@@ -13,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class CategoryController extends Controller
 {
@@ -20,7 +23,9 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->select('categories.id', 'categories.slug', 'categories.title', 'categories.icon', 'categories.created_at', 'categories.updated_at', 'users.email')
+            ->withCount('products')
             ->join('users', 'users.id', '=', 'categories.user_id')
+            ->groupBy('categories.id')
             ->get();
 
         $dataForResponse['categories'] = CategoryResource::collection($categories)->resolve();
@@ -39,28 +44,16 @@ class CategoryController extends Controller
         return Inertia::render('Admin/Categories/Create');
     }
 
-
-    public function store(StoreCategoryRequest $request): RedirectResponse
+    public function store(StoreCategoryRequest $request, StoreIconAction $storeIconAction): RedirectResponse
     {
         $data = $request->validated();
         $icon = $request->file('icon');
 
-        $filePath = "images/categories/";
-        $pathFromStorage = "storage/" . $filePath;
-
-        if (!file_exists($pathFromStorage)) {
-            mkdir($pathFromStorage, 666, true);
-        }
-
-        $file = Storage::disk('public')->put($filePath, $icon);
-
-        if (!$file) {
-            abort(500);
-        }
+        $iconPath = $storeIconAction->handle($icon);
 
         $category = $request->user()->categories()->create([
             'title' => ucfirst($data['title']),
-            'icon' => $filePath . $icon->hashName(),
+            'icon' => $iconPath,
         ]);
 
         return redirect()->route('admin.categories.show', ['category' => $category->slug]);
@@ -71,26 +64,25 @@ class CategoryController extends Controller
     {
         $category->load(['user' => function ($query) {
             $query->select('id', 'email');
-        }]);
+        }])->loadCount('products');
 
         $category['email'] = $category['user']['email'];
 
-        $numberOfRelatedProducts = 0;
-
         return Inertia::render('Admin/Categories/Show', [
-            'category' => CategoryResource::make($category)->resolve(),
-            'numberOfRelatedProducts' => $numberOfRelatedProducts]);
+            'category' => CategoryResource::make($category)->resolve()
+        ]);
     }
 
 
     public function edit(Category $category): Response
     {
         return Inertia::render('Admin/Categories/Edit', [
-            'category' => CategoryResource::make($category)->resolve()]);
+            'category' => CategorySlugAndTitleResource::make($category)->resolve()
+        ]);
     }
 
 
-    public function update(UpdateCategoryRequest $request, Category $category):
+    public function update(UpdateCategoryRequest $request, Category $category, StoreIconAction $storeIconAction):
     \Illuminate\Contracts\Foundation\Application|ResponseFactory|Application|\Illuminate\Http\Response|RedirectResponse
     {
         $data = $request->validated();
@@ -99,14 +91,7 @@ class CategoryController extends Controller
         $dataForUpdate = [];
 
         if (isset($icon)) {
-            Storage::disk('public')->delete($category->icon);
-            $file = Storage::disk('public')->put('/images/categories', $icon);
-
-            $dataForUpdate['icon'] = 'images/categories/' . $icon->hashName();
-
-            if (!$file) {
-                abort(500);
-            }
+            $dataForUpdate['icon'] = $storeIconAction->handle($icon);
         }
 
         if (array_key_exists('title', $data)) {
@@ -117,7 +102,7 @@ class CategoryController extends Controller
 
         try {
             $category->updateOrFail($dataForUpdate);
-        } catch (QueryException $e) {
+        } catch (QueryException|Throwable) {
             return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
         }
 
