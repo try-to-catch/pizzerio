@@ -54,7 +54,7 @@ const {categories, message} = defineProps<{ categories: ICategory[], message?: s
                             </Link>
                         </td>
                         <td class="px-6 py-4 pl-20">
-                            0
+                            {{ category.number_of_related_products }}
                         </td>
                         <td class="px-6 py-4">
                             {{ category.created_by }}

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Head, Link, router} from "@inertiajs/vue3";
-import {ICategory} from "@/types/ICategory";
+import type {ICategory} from "@/types/ICategory";
 
-const {category, numberOfRelatedProducts} = defineProps<{ category: ICategory, numberOfRelatedProducts: number }>()
+const {category} = defineProps<{ category: ICategory }>()
 
 const deleteCategory = () => router.delete(`/admin/categories/${category.slug}`)
 
@@ -82,10 +82,10 @@ const deleteCategory = () => router.delete(`/admin/categories/${category.slug}`)
                     </tr>
                     <tr class="bg-white border-b">
                         <th class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" scope="row">
-                            Number of related products
+                            Number Of Related Products
                         </th>
                         <td class="px-6 py-4">
-                            {{ numberOfRelatedProducts }}
+                            {{ category.number_of_related_products }}
                         </td>
                     </tr>
                     </tbody>
