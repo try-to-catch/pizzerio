@@ -129,9 +129,10 @@ class ProductController extends Controller
                 unset($data['title']);
             }
         }
+
         try {
             $product->updateOrFail($data);
-        } catch (QueryException $e) {
+        } catch (QueryException) {
             return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
         }
 
