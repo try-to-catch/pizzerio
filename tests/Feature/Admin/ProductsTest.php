@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Tests\TestCase;
 
 class ProductsTest extends TestCase
@@ -19,7 +18,6 @@ class ProductsTest extends TestCase
     {
         parent::setUp();
         Storage::fake();
-        Image::fake();
 
         $this->withHeaders([
             'accept' => 'application/json'
@@ -114,8 +112,7 @@ class ProductsTest extends TestCase
             'thumbnail' => $product->thumbnail,
 
         ]);
-
-        $this->assertFileExists('storage/'.$product->thumbnail);
+        Storage::disk('public')->assertExists($product->thumbnail);
     }
 
     public function test_admin_can_update_product(): void
@@ -171,7 +168,7 @@ class ProductsTest extends TestCase
 
         ]);
 
-        $this->assertFileExists('storage/'.$product->thumbnail);
+        Storage::disk('public')->assertExists($product->thumbnail);
     }
 
     public function test_admin_can_delete_product(): void
