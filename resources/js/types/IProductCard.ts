@@ -1,8 +1,7 @@
-export interface IProductCard {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    thumbnail: string;
-    status?: string | null;
+import {IProductCardEssentials} from "@/types/IProductCardEssentials";
+
+export interface IProductCard extends IProductCardEssentials {
+    readonly sale_price: number | null;
+    readonly priority: number;
+    readonly banner: string | null;
 }
