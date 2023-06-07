@@ -2,12 +2,13 @@
 
 namespace App\Actions\Category;
 
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class StoreIconAction
 {
-    public function handle(UploadedFile|null $icon): string
+    public function handle(UploadedFile|File|null $icon): string
     {
         $filePath = "images/categories/";
         $publicFilePath = public_path("storage/" . $filePath);
