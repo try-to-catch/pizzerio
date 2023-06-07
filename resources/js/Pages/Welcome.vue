@@ -3,16 +3,12 @@ import {Head, Link} from '@inertiajs/vue3';
 import MainLayout from "@/Layouts/MainLayout.vue";
 import ProductsGrid from "@/Components/ProductsGrid.vue";
 import FlameIcon from "@/Components/Icons/FlameIcon.vue";
-import PizzaIcon from "@/Components/Icons/PizzaIcon.vue";
-import SushiIcon from "@/Components/Icons/SushiIcon.vue";
-import DrinkIcon from "@/Components/Icons/DrinkIcon.vue";
-import SnacksIcon from "@/Components/Icons/SnacksIcon.vue";
-import ComboIcon from "@/Components/Icons/ComboIcon.vue";
-import DessertsIcon from "@/Components/Icons/DessertsIcon.vue";
-import SauceIcon from "@/Components/Icons/SauceIcon.vue";
 import ScrollCard from "@/Components/ScrollCard.vue";
 import SendIcon from "@/Components/Icons/SendIcon.vue";
 import LocationIcon from "@/Components/Icons/LocationIcon.vue";
+import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
+
+const {categories} = defineProps<{ categories: ICategoryEssentialsWithProductCards[] }>()
 </script>
 
 <template>
@@ -30,55 +26,15 @@ import LocationIcon from "@/Components/Icons/LocationIcon.vue";
                             Акции
                         </a>
                     </li>
-                    <li>
+                    <li v-for="category in categories">
                         <Link
                             :href="route('products')"
                             class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm">
-                            <pizza-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Пицца
+                            <div class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"><img :alt="`${category.title} icon`"
+                                                                                         :src="category.icon">
+                            </div>
+                            {{ category.title }}
                         </Link>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <sushi-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Суши
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <drink-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Напитки
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <snacks-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Закуски
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <combo-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Комбо
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <desserts-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Десерты
-                        </a>
-                    </li>
-                    <li>
-                        <a class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm"
-                           href="#">
-                            <sauce-icon class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"/>
-                            Соусы
-                        </a>
                     </li>
                 </ul>
             </div>
@@ -129,9 +85,12 @@ import LocationIcon from "@/Components/Icons/LocationIcon.vue";
                 </form>
             </div>
 
-            <div class="sm:container sm:mx-auto mx-5 mt-[30px]">
-                <products-grid/>
+            <div class="sm:container sm:mx-auto mx-5 mt-[30px] space-y-[46px]">
+                <div v-for="category in categories">
+                    <products-grid :category="category"/>
+                </div>
             </div>
+
         </div>
     </main-layout>
 </template>
