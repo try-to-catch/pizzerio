@@ -5,7 +5,7 @@ withDefaults(defineProps<{
     id?: string,
     label?: string
     accept?: string
-}>(), {id: 'icon', label: 'Icon', required: false, accept: 'image/png'})
+}>(), {id: 'icon', label: 'Icon', required: false, accept: 'image/png,.svg'})
 </script>
 <template>
     <div>
@@ -18,7 +18,7 @@ withDefaults(defineProps<{
         </div>
         <input :id="id" :accept="accept"
                :class="{'border border-red-700': errors}"
-               :required="required" accept="image/png,jpg"
+               :required="required"
                class="w-full py-2 px-3 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
                type="file"/>
     </div>
