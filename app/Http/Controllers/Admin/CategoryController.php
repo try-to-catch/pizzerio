@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Actions\Category\StoreIconAction;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Category\StoreCategoryRequest;
+use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Category\CategorySlugAndTitleResource;
 use App\Models\Category;
@@ -26,14 +27,10 @@ class CategoryController extends Controller
             ->withCount('products')
             ->join('users', 'users.id', '=', 'categories.user_id')
             ->groupBy('categories.id')
+            ->orderByDesc('categories.updated_at')
             ->get();
 
         $dataForResponse['categories'] = CategoryResource::collection($categories)->resolve();
-
-        $message = session('message');
-        if ($message) {
-            $dataForResponse['message'] = $message;
-        }
 
         return Inertia::render('Admin/Categories/Index', $dataForResponse);
     }
@@ -100,10 +97,15 @@ class CategoryController extends Controller
             }
         }
 
-        try {
-            $category->updateOrFail($dataForUpdate);
-        } catch (QueryException|Throwable) {
-            return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
+        if (count($dataForUpdate)){
+            try {
+                $category->updateOrFail($dataForUpdate);
+            } catch (QueryException|Throwable) {
+                return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
+            }
+        }
+        else{
+            $category->touch();
         }
 
         return redirect()->route('admin.categories.show', ['category' => $category->slug]);

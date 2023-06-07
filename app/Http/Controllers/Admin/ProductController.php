@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Actions\Product\StoreThumbnailAction;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Product\StoreProductRequest;
+use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Http\Resources\Category\CategoryMinResource;
 use App\Http\Resources\Product\ProductEditResource;
 use App\Http\Resources\Product\ProductIndexResource;
@@ -44,13 +45,7 @@ class ProductController extends Controller
             ->paginate(6);
 
         $dataForResponse['products'] = $products->toArray();
-
         $dataForResponse['products']['data'] = ProductIndexResource::collection($products)->resolve();
-
-        $message = session('message');
-        if ($message) {
-            $dataForResponse['message'] = $message;
-        }
 
         return Inertia::render('Admin/Products/Index', $dataForResponse);
     }
