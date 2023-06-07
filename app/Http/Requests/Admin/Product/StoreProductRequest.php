@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
 class StoreProductRequest extends FormRequest
 {
@@ -33,7 +32,7 @@ class StoreProductRequest extends FormRequest
             'price' => ['required', 'decimal:0,2'],
             'sale_price' => ['decimal:0,2', 'nullable'],
             'priority' => ['required', 'integer', 'between:0,999'],
-            'thumbnail' => ['required', 'image', 'dimensions:min_width=450,min_height=450'],
+            'thumbnail' => ['required', 'image', 'dimensions:min_width=300,min_height=300'],
         ];
     }
 }

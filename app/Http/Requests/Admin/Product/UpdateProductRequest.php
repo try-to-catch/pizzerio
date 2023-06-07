@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin\Product;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -32,7 +32,7 @@ class UpdateProductRequest extends FormRequest
             'price' => ['required', 'decimal:0,2'],
             'sale_price' => ['decimal:0,2', 'nullable'],
             'priority' => ['required', 'integer', 'between:0,999'],
-            'thumbnail' => ['nullable', 'image', 'dimensions:min_width=450,min_height=450'],
+            'thumbnail' => ['nullable', 'image', 'dimensions:min_width=300,min_height=300'],
         ];
     }
 }
