@@ -11,8 +11,8 @@ const {product} = defineProps<{ product: IProductCardEssentials }>()
              class="absolute py-[7px] px-[18px] text-sm bg-red-bg text-white uppercase left-0 top-5 rounded-r-md">
             {{ product.banner }}
         </div>
-        <div class="max:h-300 max:w-300 overflow-hidden flex items-center justify-center">
-            <img :alt="product.title" :src="product.thumbnail">
+        <div class="overflow-hidden flex items-center justify-center">
+            <img class="max-h-[300px] max-w-full bg-cover " :alt="product.title" :src="product.thumbnail">
         </div>
         <div class="m-5 mt-4">
             <h2 class="font-semibold capitalize">{{ product.title }}</h2>
