@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\User\UserMinResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -30,10 +31,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $userData = $user?UserMinResource::make($user)->resolve():$user;
+
         return array_merge(parent::share($request), [
             'message' => $request->session()->get('message'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $userData,
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
