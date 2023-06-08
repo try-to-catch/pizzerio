@@ -12,7 +12,6 @@ class HomeController extends Controller
 {
     public function __invoke(): Response
     {
-        //TODO add products limitation up to 8 items in 1 category
         $categories = Category::query()
             ->limit(7)
             ->withWhereHas('products', function (Builder $query) {
@@ -26,6 +25,10 @@ class HomeController extends Controller
             }])
             ->orderByDesc('updated_at')
             ->get(['id', 'title', 'icon', 'slug']);
+
+        $categories->each(function ($category) {
+            $category->products = $category->products->take(8);
+        });
 
         return Inertia::render('Welcome', [
             'categories' => CategoryEssentialsWithProductsResource::collection($categories)->resolve(),
