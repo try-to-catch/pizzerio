@@ -7,14 +7,16 @@ import ScrollCard from "@/Components/ScrollCard.vue";
 import SendIcon from "@/Components/Icons/SendIcon.vue";
 import LocationIcon from "@/Components/Icons/LocationIcon.vue";
 import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
+import type {IAuthData} from "@/types/IAuthData";
 
-const {categories} = defineProps<{ categories: ICategoryEssentialsWithProductCards[] }>()
+const {categories, auth} = defineProps<{ categories: ICategoryEssentialsWithProductCards[], auth: IAuthData }>()
+
 </script>
 
 <template>
     <Head><title>Home</title></Head>
 
-    <main-layout>
+    <main-layout :user="auth.user">
         <div class="bg-gray-bg py-[30px]">
             <div class="lg:mb-6 mb-5 sm:mx-auto sm:container mx-5">
                 <ul :class="[$style['scrollbar-thin']]"
@@ -30,8 +32,8 @@ const {categories} = defineProps<{ categories: ICategoryEssentialsWithProductCar
                         <Link
                             :href="route('products')"
                             class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm">
-                            <div class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0"><img :alt="`${category.title} icon`"
-                                                                                         :src="category.icon">
+                            <div class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0">
+                                <img :alt="`${category.title} icon`" :src="category.icon">
                             </div>
                             {{ category.title }}
                         </Link>
