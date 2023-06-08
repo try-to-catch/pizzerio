@@ -9,8 +9,12 @@ import {computed, onMounted, onUnmounted, ref} from "vue";
 import {IResizeEventTarget} from "@/types/IResizeEventTarget";
 import CrossIcon from "@/Components/Icons/CrossIcon.vue";
 import MainFooter from "@/Components/MainFooter.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, router} from "@inertiajs/vue3";
+import {IUserEssentials} from "@/types/IUserEssentials";
 
+const {user} = defineProps<{ user?: IUserEssentials }>()
+
+const isActionListOpen = ref(false)
 const isMenuOpen = ref(false)
 const width = ref(window.innerWidth)
 const height = ref(window.innerHeight)
@@ -40,6 +44,10 @@ const isOverlayOpen = computed(() => {
 const headerHeight = computed(() => {
     return window.location.pathname === '/' ? 106 : 66;
 })
+
+const logout = () => {
+    router.post(route('logout'));
+}
 </script>
 
 <template>
@@ -68,13 +76,27 @@ const headerHeight = computed(() => {
 
                     <div class="space-x-10 text-sm items-center lg:flex hidden">
                         <div>Время работы: с 11:00 до 23:00</div>
-                        <div class="">
-                            <Link class="text-sm flex items-center" :href="route('login')">
+                        <div v-if="!user">
+                            <Link :href="route('login')" class="text-sm flex items-center">
                                 <person-icon/>
-                                <span class="hover:underline ml-2">
-                        Войти в аккаунт
-                        </span>
+                                <span class="hover:underline ml-2">Войти в аккаунт</span>
                             </Link>
+                        </div>
+                        <div v-else class="relative bg-white h-full flex z-20" @mouseleave="isActionListOpen= false"
+                             @mouseover="isActionListOpen = true">
+                            <button class="flex items-center justify-end bg-white h-full flex z-10 min-w-[80px]">
+                                <span class="ml-2 font-semibold">{{ user.name }}</span>
+                            </button>
+                            <transition name="action-list">
+                                <div v-if="isActionListOpen"
+                                     class="absolute right-[1px] bg-white border border-gray-200 min-w-[78px] -z-10 top-10">
+                                    <ul class="px-2">
+                                        <li>
+                                            <button class="flex flex-col  py-2 text-sm" @click="logout">Выйти</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </transition>
                         </div>
                     </div>
                 </div>
@@ -141,12 +163,14 @@ const headerHeight = computed(() => {
             <nav v-if="isOverlayOpen" :style="{height: height - headerHeight + 'px', top: headerHeight + 'px'}"
                  class="lg:hidden fixed right-0 w-full z-20 bg-white">
                 <div class="py-4 text-center">
-                    <Link class="text-sm flex items-center sm:container sm:mx-auto mx-5" :href="route('login')">
+                    <Link v-if="!user" :href="route('login')"
+                          class="text-sm flex items-center sm:container sm:mx-auto mx-5">
                         <person-icon/>
-                        <span class="hover:underline ml-4 text-[17px]">
-                        Войти в аккаунт
-                    </span>
+                        <span class="hover:underline ml-4 text-[17px]">Войти в аккаунт</span>
                     </Link>
+                    <div v-else class="flex items-center sm:container sm:mx-auto mx-5">
+                        <button class="flex flex-col font-semibold py-2" @click="logout">Выйти из аккаунта</button>
+                    </div>
                 </div>
                 <div class="py-2 border-y border-gray-200">
                     <ul class="normal-case flex flex-col sm:container sm:mx-auto mx-5">
@@ -240,5 +264,20 @@ const headerHeight = computed(() => {
 .overlay-enter-from,
 .overlay-leave-to {
     transform: translateY(calc(-100vh + 66px));
+}
+
+.action-list-enter-active {
+    transform: translateY(0);
+    transition: transform 0.4s ease-in-out;
+}
+
+.action-list-leave-active {
+    transform: translateY(0);
+    transition: transform 0.2s ease-in-out;
+}
+
+.action-list-enter-from,
+.action-list-leave-to {
+    transform: translateY(-40px);
 }
 </style>
