@@ -1,4 +1,4 @@
-interface IPagination {
+export interface IPagination {
     current_page: number;
     data: any[];
     first_page_url: string;

@@ -10,13 +10,14 @@ import {onMounted, ref} from "vue";
 import type {IProduct} from "@/types/IProduct";
 import DefaultPagination from "@/Components/DefaultPagination.vue";
 import StatusIcon from "@/Components/StatusIcon.vue";
+import {IPagination} from "@/types/IPagination";
 
 interface IProductPagination extends IPagination {
     data: IProduct[];
 }
 
 const props = defineProps<{ products: IProductPagination, message?: string }>()
-console.log(props)
+
 const searchField = ref('')
 
 const filterProducts = () => {
