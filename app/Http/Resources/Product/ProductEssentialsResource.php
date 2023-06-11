@@ -22,7 +22,6 @@ class ProductEssentialsResource extends JsonResource
             'ingredients' => $this->ingredients,
             'price' => $this->price,
             'sale_price' => $this->sale_price,
-            'priority' => $this->priority,
             'banner' => $this->banner,
             'thumbnail' => '/storage/' . $this->thumbnail,
         ];
