@@ -6,7 +6,7 @@ const {product} = defineProps<{ product: IProductCardEssentials }>()
 </script>
 
 <template>
-    <div class="rounded-xl bg-white relative border border-gray-100">
+    <div class="rounded-xl bg-white relative border border-gray-100 cursor-pointer">
         <div v-if="product.banner"
              class="absolute py-[7px] px-[18px] text-sm bg-red-bg text-white uppercase left-0 top-5 rounded-r-md">
             {{ product.banner }}
