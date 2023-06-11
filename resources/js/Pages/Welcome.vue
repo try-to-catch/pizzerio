@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {Head, Link} from '@inertiajs/vue3';
+import {Head, Link, router} from '@inertiajs/vue3';
 import MainLayout from "@/Layouts/MainLayout.vue";
 import ProductsGrid from "@/Components/ProductsGrid.vue";
 import FlameIcon from "@/Components/Icons/FlameIcon.vue";
@@ -8,15 +8,43 @@ import SendIcon from "@/Components/Icons/SendIcon.vue";
 import LocationIcon from "@/Components/Icons/LocationIcon.vue";
 import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
 import type {IAuthData} from "@/types/IAuthData";
+import {IProductDetails} from "@/types/IProductDetails";
+import {ref, watchEffect} from "vue";
 
-const {categories, auth} = defineProps<{ categories: ICategoryEssentialsWithProductCards[], auth: IAuthData }>()
+
+const props = defineProps<{
+    categories: ICategoryEssentialsWithProductCards[],
+    auth: IAuthData,
+    selectedProduct: IProductDetails | {},
+}>()
+
+const {categories, auth} = props
+const openProductModal = (product) => {
+    router.reload({
+        data: {
+            p: product
+        },
+    })
+}
+
+const isProductSelected = ref<boolean>(!!Object.keys(props.selectedProduct).length)
+
+router.on('success', () => {
+    isProductSelected.value = !!Object.keys(props.selectedProduct).length
+})
+
+watchEffect(() => {
+    if (isProductSelected) {
+        document.body.style.overflow = isProductSelected.value ? 'hidden' : 'auto';
+    }
+})
 
 </script>
 
 <template>
     <Head><title>Home</title></Head>
 
-    <main-layout :user="auth.user">
+    <main-layout :class="{'blur-lg overflow-hidden': isProductSelected}" :user="auth.user">
         <div class="bg-gray-bg py-[30px]">
             <div class="lg:mb-6 mb-5 sm:mx-auto sm:container mx-5">
                 <ul :class="[$style['scrollbar-thin']]"
@@ -89,12 +117,15 @@ const {categories, auth} = defineProps<{ categories: ICategoryEssentialsWithProd
 
             <div class="sm:container sm:mx-auto mx-5 mt-[30px] space-y-[46px]">
                 <div v-for="category in categories">
-                    <products-grid :category="category"/>
+                    <products-grid :category="category" @productChosen="openProductModal"/>
                 </div>
             </div>
 
         </div>
     </main-layout>
+
+    <div v-if="isProductSelected"
+         class="w-screen h-screen fixed top-0 right-0 left-0 bg-[#19191966] bg-opacity-40 blur-lg z-50"></div>
 </template>
 
 <style module>
