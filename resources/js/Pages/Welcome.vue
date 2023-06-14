@@ -10,12 +10,13 @@ import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssenti
 import type {IAuthData} from "@/types/IAuthData";
 import {IProductDetails} from "@/types/IProductDetails";
 import {ref, watchEffect} from "vue";
+import ProductModal from "@/Components/ProductModal.vue";
 
 
 const props = defineProps<{
     categories: ICategoryEssentialsWithProductCards[],
     auth: IAuthData,
-    selectedProduct: IProductDetails | {},
+    selectedProduct?: IProductDetails,
 }>()
 
 const {categories, auth} = props
@@ -38,6 +39,10 @@ watchEffect(() => {
         document.body.style.overflow = isProductSelected.value ? 'hidden' : 'auto';
     }
 })
+
+const unSelectProduct = () => {
+    console.log('unselect')
+}
 
 </script>
 
@@ -124,8 +129,7 @@ watchEffect(() => {
         </div>
     </main-layout>
 
-    <div v-if="isProductSelected"
-         class="w-screen h-screen fixed top-0 right-0 left-0 bg-[#19191966] bg-opacity-40 blur-lg z-50"></div>
+    <product-modal @modalClose="unSelectProduct" v-if="selectedProduct && isProductSelected" :product="selectedProduct as IProductDetails"/>
 </template>
 
 <style module>
