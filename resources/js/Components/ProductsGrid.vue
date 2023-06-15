@@ -3,14 +3,15 @@ import {Link} from "@inertiajs/vue3";
 import ProductCard from "@/Components/ProductCard.vue";
 import FilterIcon from "@/Components/Icons/FilterIcon.vue";
 import {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
+import {IProductCardEssentials} from "@/types/IProductCardEssentials";
 
 const {category} = defineProps<{ category: ICategoryEssentialsWithProductCards }>()
 
 
-const emit = defineEmits<{ (e: 'productChosen', value: string): void }>()
+const emit = defineEmits<{ (e: 'productChosen', value: IProductCardEssentials): void }>()
 
-const notifyBaseComponent = (productId: string) => {
-    emit('productChosen', productId)
+const notifyBaseComponent = (product: IProductCardEssentials) => {
+    emit('productChosen', product)
 }
 </script>
 
@@ -30,7 +31,7 @@ const notifyBaseComponent = (productId: string) => {
 
         <div class="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-[30px]">
             <ProductCard v-for="product in category.products" :key="product.id"
-                         :product="product" @click="notifyBaseComponent(product.slug)"/>
+                         :product="product" @click="notifyBaseComponent(product)"/>
         </div>
     </div>
 </template>
