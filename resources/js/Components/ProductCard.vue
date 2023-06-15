@@ -20,7 +20,7 @@ const {product} = defineProps<{ product: IProductCardEssentials }>()
             <div class="flex justify-between items-center mt-4">
                 <button class="text-white bg-primary py-[13px] px-8 rounded-md">Выбрать</button>
                 <span v-if="!product.sale_price" class="text-primary font-semibold text-lg">от {{ product.price }}$</span>
-                <span v-else class="text-red font-semibold text-lg ">от {{ product.sale_price }}$</span>
+                <span v-else class="text-red-500 font-semibold text-lg ">от {{ product.sale_price }}$</span>
             </div>
         </div>
     </div>
