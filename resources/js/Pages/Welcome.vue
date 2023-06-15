@@ -9,8 +9,10 @@ import LocationIcon from "@/Components/Icons/LocationIcon.vue";
 import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
 import type {IAuthData} from "@/types/IAuthData";
 import {IProductDetails} from "@/types/IProductDetails";
-import {ref, watchEffect} from "vue";
+import {onMounted, ref, watchEffect} from "vue";
 import ProductModal from "@/Components/ProductModal.vue";
+import {IProductCardEssentials} from "@/types/IProductCardEssentials";
+import {IOrderEssentials} from "@/types/IOrderEssentials";
 
 
 const props = defineProps<{
@@ -20,30 +22,51 @@ const props = defineProps<{
 }>()
 
 const {categories, auth} = props
-const openProductModal = (product) => {
+const selectedProductThumbnail = ref('')
+const productModal = ref<InstanceType<typeof ProductModal> | null>(null)
+const openProductModal = (product: IProductCardEssentials) => {
+    selectedProductThumbnail.value = product.thumbnail
+
     router.reload({
         data: {
-            p: product
+            p: product.slug
         },
     })
 }
 
 const isProductSelected = ref<boolean>(!!Object.keys(props.selectedProduct).length)
 
-router.on('success', () => {
-    isProductSelected.value = !!Object.keys(props.selectedProduct).length
-})
+const openModal = async (product: IProductDetails) => {
+    const modalResult: Promise<null | IOrderEssentials> = await productModal.value?.open(product)
+    isProductSelected.value = false
 
-watchEffect(() => {
-    if (isProductSelected) {
-        document.body.style.overflow = isProductSelected.value ? 'hidden' : 'auto';
+    if (!modalResult) {
+        const newUrl = window.location.href.split('?')[0]
+        window.history.pushState({path: newUrl}, '', newUrl)
+
+        isProductSelected.value = false
+    }
+
+    if (modalResult) {
+        console.log(modalResult, 'gotcha')
+    }
+}
+
+onMounted(() => {
+    if (isProductSelected.value) {
+        openModal(props.selectedProduct!)
     }
 })
 
-const unSelectProduct = () => {
-    console.log('unselect')
-}
+router.on('success', () => {
+    isProductSelected.value = !!Object.keys(props.selectedProduct).length
 
+    if (isProductSelected.value) {
+        openModal(props.selectedProduct!)
+    }
+})
+
+watchEffect(() => document.body.style.overflow = isProductSelected.value ? 'hidden' : 'auto')
 </script>
 
 <template>
@@ -129,7 +152,7 @@ const unSelectProduct = () => {
         </div>
     </main-layout>
 
-    <product-modal @modalClose="unSelectProduct" v-if="selectedProduct && isProductSelected" :product="selectedProduct as IProductDetails"/>
+    <product-modal ref="productModal" :product="selectedProduct as IProductDetails"/>
 </template>
 
 <style module>
