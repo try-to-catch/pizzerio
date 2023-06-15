@@ -22,6 +22,15 @@ module.exports = {
                 'gray-border': '#F0F0F0',
                 'gray-text': '#A5A5A5',
                 'red-bg': '#E23535',
+            },
+            animation: {
+                'appear-slow': 'appear 0.3s ease',
+            },
+            keyframes: {
+                appear: {
+                    '0%': { opacity: 0 },
+                    '100%': { opacity: 1 },
+                }
             }
         },
     },
