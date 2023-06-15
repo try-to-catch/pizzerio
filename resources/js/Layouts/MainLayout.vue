@@ -54,7 +54,7 @@ const logout = () => {
     <div class="font-sans-serif w-full min-h-[100vh] flex flex-col justify-between">
         <header class="fixed top-0 right-0 w-full z-30">
             <!--top header-->
-            <div :class="{hidden: $page.url !== '/'}" class="bg-white">
+            <div :class="{hidden: !$page.url.startsWith('/')}" class="bg-white">
                 <div class="h-10 flex justify-between sm:container sm:mx-auto mx-5">
                     <div class="space-x-10 flex items-center text-sm justify-between lg:justify-start lg:w-auto w-full">
                         <div class="flex items-center">
@@ -102,14 +102,14 @@ const logout = () => {
                 </div>
             </div>
             <!--bottom header-->
-            <div class="border-y border-gray-200 bg-white">
+            <div class="border-b border-gray-200 bg-white">
                 <div class="h-16 flex items-center sm:container sm:mx-auto mx-5 justify-between">
                     <div class="flex items-center h-full lg:justify-start justify-between lg:w-auto w-full">
                         <Link :href="route('home')" class="flex">
                             <pizza-icon class="w-8 h-8"/>
                             <span class="ml-3 md:text-xl whitespace-nowrap text-lg">Куда пицца</span>
                         </Link>
-                        <nav :class="{'lg:flex': $page.url !== '/'}" class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
+                        <nav :class="{'lg:flex': !$page.url.startsWith('/')}" class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
                             <ul class="flex h-full">
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
                                     <a class="h-full w-full flex items-center" href="#">Акции</a>
@@ -149,7 +149,7 @@ const logout = () => {
                     <div class="lg:flex hidden">
                         <div class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
-                            <span :class="[$page.url !== '/'? 'xl:block hidden': 'block']" class="text-white">
+                            <span :class="[!$page.url.startsWith('/')? 'xl:block hidden': 'block']" class="text-white">
                                 0 $
                             </span>
                         </div>
@@ -172,7 +172,7 @@ const logout = () => {
                         <button class="flex flex-col font-semibold py-2" @click="logout">Выйти из аккаунта</button>
                     </div>
                 </div>
-                <div class="py-2 border-y border-gray-200">
+                <div class="py-2 border-b border-gray-200">
                     <ul class="normal-case flex flex-col sm:container sm:mx-auto mx-5">
                         <li class="h-full hover:bg-primary hover:text-white w-full">
                             <a class="w-full flex py-2" href="#">Акции</a>
