@@ -30,6 +30,10 @@ module.exports = {
                 appear: {
                     '0%': { opacity: 0 },
                     '100%': { opacity: 1 },
+                },
+                'emerge': {
+                    '0%': { transform: 'translateY(80%)' },
+                    '100%': { transform: 'translateY(0%)' },
                 }
             }
         },
