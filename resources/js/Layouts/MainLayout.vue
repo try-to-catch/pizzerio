@@ -11,6 +11,8 @@ import CrossIcon from "@/Components/Icons/CrossIcon.vue";
 import MainFooter from "@/Components/MainFooter.vue";
 import {Link, router} from "@inertiajs/vue3";
 import {IUserEssentials} from "@/types/IUserEssentials";
+import UseCart from "@/composables/Cart";
+import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 
 const {user} = defineProps<{ user?: IUserEssentials }>()
 
@@ -29,6 +31,9 @@ const resizeEvent = (ev) => {
     }
 };
 
+const cartInstance = new UseCart()
+const cart = ref<IOrderEssentialsWithQuantity[]>(cartInstance.cart)
+
 onMounted(() => {
     addEventListener('resize', resizeEvent)
 })
@@ -41,13 +46,34 @@ const isOverlayOpen = computed(() => {
     return width.value < 1024 && isMenuOpen.value
 })
 
-const headerHeight = computed(() => {
+const headerHeight = computed((): 106 | 66 => {
     return window.location.pathname === '/' ? 106 : 66;
+})
+
+const formattedCartItemsCount = computed((): "9+" | number => {
+    const cartItemsCount = cart.value.length
+
+    if (cartItemsCount > 9) {
+        return '9+'
+    }
+
+    return cartItemsCount
+})
+
+const formattedCartTotalPrice = computed((): string => {
+    const total = cart.value.reduce((acc, item) => {
+        return acc + item.price * item.quantity
+    }, 0)
+
+    return (total > 999 ? '999+' : total) + '$'
 })
 
 const logout = () => {
     router.post(route('logout'));
 }
+
+
+defineExpose({cartInstance})
 </script>
 
 <template>
@@ -84,7 +110,7 @@ const logout = () => {
                         </div>
                         <div v-else class="relative bg-white h-full flex z-20" @mouseleave="isActionListOpen= false"
                              @mouseover="isActionListOpen = true">
-                            <button class="flex items-center justify-end bg-white h-full flex z-10 min-w-[80px]">
+                            <button class="flex items-center justify-end bg-white h-full z-10 min-w-[80px]">
                                 <span class="ml-2 font-semibold">{{ user.name }}</span>
                             </button>
                             <transition name="action-list">
@@ -102,14 +128,15 @@ const logout = () => {
                 </div>
             </div>
             <!--bottom header-->
-            <div class="border-b border-gray-200 bg-white">
+            <div class="border-y border-gray-200 bg-white">
                 <div class="h-16 flex items-center sm:container sm:mx-auto mx-5 justify-between">
                     <div class="flex items-center h-full lg:justify-start justify-between lg:w-auto w-full">
                         <Link :href="route('home')" class="flex">
                             <pizza-icon class="w-8 h-8"/>
                             <span class="ml-3 md:text-xl whitespace-nowrap text-lg">Куда пицца</span>
                         </Link>
-                        <nav :class="{'lg:flex': !$page.url.startsWith('/')}" class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
+                        <nav :class="{'lg:flex': !$page.url.startsWith('/')}"
+                             class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
                             <ul class="flex h-full">
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
                                     <a class="h-full w-full flex items-center" href="#">Акции</a>
@@ -150,7 +177,7 @@ const logout = () => {
                         <div class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
                             <span :class="[!$page.url.startsWith('/')? 'xl:block hidden': 'block']" class="text-white">
-                                0 $
+                                {{ formattedCartTotalPrice }}
                             </span>
                         </div>
                     </div>
@@ -212,8 +239,16 @@ const logout = () => {
             </nav>
         </transition>
 
-        <main :style="{marginTop: headerHeight + 'px'}" class="grow">
+        <main :style="{marginTop: headerHeight + 'px'}" class="grow relative">
             <slot/>
+
+            <div class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary rounded-full flex lg:hidden">
+                <cart-icon class="w-6 h-6"/>
+                <div
+                    class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-sm">
+                    {{ formattedCartItemsCount }}
+                </div>
+            </div>
         </main>
 
         <footer class="bg-white py-8">
