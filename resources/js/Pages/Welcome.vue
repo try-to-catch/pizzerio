@@ -8,11 +8,11 @@ import SendIcon from "@/Components/Icons/SendIcon.vue";
 import LocationIcon from "@/Components/Icons/LocationIcon.vue";
 import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
 import type {IAuthData} from "@/types/IAuthData";
-import {IProductDetails} from "@/types/IProductDetails";
+import type {IProductDetails} from "@/types/IProductDetails";
 import {onMounted, ref, watchEffect} from "vue";
 import ProductModal from "@/Components/ProductModal.vue";
-import {IProductCardEssentials} from "@/types/IProductCardEssentials";
-import {IOrderEssentials} from "@/types/IOrderEssentials";
+import type {IProductCardEssentials} from "@/types/IProductCardEssentials";
+import type {IOrderEssentials} from "@/types/IOrderEssentials";
 
 
 const props = defineProps<{
@@ -22,6 +22,7 @@ const props = defineProps<{
 }>()
 
 const {categories, auth} = props
+
 const selectedProductThumbnail = ref('')
 const productModal = ref<InstanceType<typeof ProductModal> | null>(null)
 const openProductModal = (product: IProductCardEssentials) => {
@@ -34,10 +35,11 @@ const openProductModal = (product: IProductCardEssentials) => {
     })
 }
 
+const mainLayout = ref<InstanceType<typeof MainLayout> | null>(null)
 const isProductSelected = ref<boolean>(!!Object.keys(props.selectedProduct).length)
 
 const openModal = async (product: IProductDetails) => {
-    const modalResult: Promise<null | IOrderEssentials> = await productModal.value?.open(product)
+    const modalResult: null | IOrderEssentials = await productModal.value?.open(product)
     isProductSelected.value = false
 
     if (!modalResult) {
@@ -48,7 +50,7 @@ const openModal = async (product: IProductDetails) => {
     }
 
     if (modalResult) {
-        console.log(modalResult, 'gotcha')
+        mainLayout.value?.cartInstance?.addToCart(modalResult)
     }
 }
 
@@ -72,7 +74,7 @@ watchEffect(() => document.body.style.overflow = isProductSelected.value ? 'hidd
 <template>
     <Head><title>Home</title></Head>
 
-    <main-layout :class="{'blur-lg overflow-hidden': isProductSelected}" :user="auth.user">
+    <main-layout ref="mainLayout" :class="{'blur-lg overflow-hidden': isProductSelected}" :user="auth.user">
         <div class="bg-gray-bg py-[30px]">
             <div class="lg:mb-6 mb-5 sm:mx-auto sm:container mx-5">
                 <ul :class="[$style['scrollbar-thin']]"
