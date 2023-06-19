@@ -2,7 +2,7 @@
 
 import type {IOrderEssentials} from "@/types/IOrderEssentials";
 import {reactive} from "vue";
-import {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
+import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 
 export default class UseCart {
 
