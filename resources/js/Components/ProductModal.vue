@@ -19,6 +19,7 @@ const product = ref<IProductDetails | null>(null)
 const order = reactive<IOrderEssentials>({
     slug: "",
     thumbnail: "",
+    price: 0,
     title: ""
 })
 
@@ -45,6 +46,7 @@ const makeOrder = () => {
     order.slug = product.value!.slug
     order.thumbnail = product.value!.thumbnail
     order.title = product.value!.title
+    order.price = product.value!.price
 
     modalController.resolve(order)
 
@@ -64,27 +66,29 @@ defineExpose({open})
 </script>
 
 <template>
-    <div v-if="isImageLoaded && isOpen"
-         class="w-screen h-screen fixed top-0 right-0 left-0 bg-[#19191966] bg-opacity-40 z-50 flex items-center animate-appear-slow"
+    <div v-if="isImageLoaded && isOpen && product"
+         class="w-screen h-screen fixed top-0 right-0 left-0 bg-[#19191966] bg-opacity-40 z-50 flex sm:items-center items-end"
          @click="close">
-        <div class="relative max-w-[1070px] mx-auto rounded-3xl w-full bg-white flex items-center h-[580px] pt-8 pb-5 pr-5"
-             @click.stop>
-            <cross-icon  @click="close" class="absolute right-10 top-8 cursor-pointer lg:block hidden"/>
-            <div class="pl-[60px] relative h-full flex items-center">
+        <div
+            class="relative lg:max-w-[1070px] lg:mx-auto sm:mx-5 sm:rounded-3xl rounded-t-2xl w-full bg-white flex flex-col md:flex-row items-center sm:h-[580px] h-4/5 pt-8 pb-5 md:pr-5 md:animate-appear-slow animate-[emerge_0.35s_ease-in-out]"
+            @click.stop>
+            <cross-icon class="absolute right-10 top-8 cursor-pointer z-10" @click="close"/>
+            <div
+                class="md:pl-[60px] relative h-full flex items-center w-full md:w-auto justify-center md:justify-start">
                 <div v-if="product!.banner"
                      class="absolute py-[7px] px-[18px] text-sm bg-red-bg text-white uppercase left-0 top-5 rounded-r-md">
                     {{ product!.banner }}
                 </div>
 
-                <div class="w-[450px] h-[450px]">
+                <div class="lg:w-[450px] md:w-[300px] max-w-[300px] md:max-w-full w-full px-5 sm:px-0">
                     <img :src="product!.thumbnail" alt="selected pizza" class="w-full">
                 </div>
             </div>
 
-            <div class="pl-[60px]">
+            <div class="md:pl-[60px] px-5">
                 <div class="mb-4">
                     <h4 class="text-xl font-semibold flex items-center capitalize">
-                        <flame-icon v-if="product!.sale_price" class="mr-2"/>
+                        <flame-icon v-if="product!.banner" class="mr-2"/>
                         <thin-flame-icon v-else class="mr-2"/>
                         {{ product!.title }}
                     </h4>
@@ -128,10 +132,11 @@ defineExpose({open})
                                             </ul>
                                         </div>-->
 
-                    <div class="flex justify-between items-center">
+                    <div  class="flex justify-between items-center">
                         <div class="flex items-baseline">
-                            <div class="text-xl font-semibold text-primary">
-                                Итого: 123$
+                            <div :class="[product!.sale_price ? 'text-red font-semibold' : 'text-primary']"
+                                 class="text-xl font-semibold">
+                                Итого: {{product!.sale_price || product!.price}}$
                             </div>
                             <div class="text-sm text-gray-text ml-2">
                                 400 г
@@ -139,7 +144,7 @@ defineExpose({open})
                         </div>
 
 
-                        <button class="px-10 py-[13px] bg-primary rounded-md text-white" @click="makeOrder">
+                        <button class="px-10 py-[13px] bg-primary rounded-md text-white ml-5" @click="makeOrder">
                             Добавить
                         </button>
                     </div>
