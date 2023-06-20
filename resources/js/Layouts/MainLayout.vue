@@ -68,12 +68,26 @@ const formattedCartTotalPrice = computed((): string => {
     return (total > 999 ? '999+' : total) + '$'
 })
 
+const message = ref('')
+const isMessageShouldBeDisplayed = ref(false)
+
+const displayMessage = (messageText: string) => {
+    message.value = messageText
+
+    isMessageShouldBeDisplayed.value = true
+
+    setTimeout(() => {
+        isMessageShouldBeDisplayed.value = false
+    }, 5000)
+}
+
 const logout = () => {
     router.post(route('logout'));
 }
 
 
-defineExpose({cartInstance})
+
+defineExpose({cartInstance, displayMessage})
 </script>
 
 <template>
@@ -240,12 +254,23 @@ defineExpose({cartInstance})
         </transition>
 
         <main :style="{marginTop: headerHeight + 'px'}" class="grow relative">
+            <transition mode="in-out"  duration="300" name="fade">
+                <div v-if="isMessageShouldBeDisplayed" :style="{top: headerHeight + 16 +'px'}"
+                     class="fixed flex justify-center w-full z-20">
+                    <div class="py-3 px-8  text-white bg-primary rounded-full text-sm sm:text-base cursor-pointer"
+                         @click="isMessageShouldBeDisplayed = false">
+                        {{ message }}
+                    </div>
+                </div>
+            </transition>
+
             <slot/>
 
-            <div class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary rounded-full flex lg:hidden">
+            <div
+                class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full flex lg:hidden">
                 <cart-icon class="w-6 h-6"/>
                 <div
-                    class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-sm">
+                    class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-xs">
                     {{ formattedCartItemsCount }}
                 </div>
             </div>
@@ -258,7 +283,7 @@ defineExpose({cartInstance})
                         <pizza-icon class="md:w-[40px] md:h-[40px]  w-8 h-8 "/>
                         <span class="ml-3 md:text-2xl text-lg">Куда пицца</span>
                     </div>
-                    <div>
+                    <div class="text-sm sm:text-base">
                         <h4 class="mb-[22px] md:text-xl font-bold">Куда пицца</h4>
                         <ul class="space-y-4 md:space-y-5">
                             <li><a href="#">О компании</a></li>
@@ -266,7 +291,7 @@ defineExpose({cartInstance})
                             <li><a href="#">Условия гарантии</a></li>
                         </ul>
                     </div>
-                    <div>
+                    <div class="text-sm sm:text-base">
                         <h4 class="mb-[22px] md:text-xl font-bold">Помощь</h4>
                         <ul class="space-y-4 md:space-y-5">
                             <li><a href="#">Ресторан</a></li>
@@ -275,12 +300,12 @@ defineExpose({cartInstance})
                             <li><a href="#">Отследить заказ</a></li>
                         </ul>
                     </div>
-                    <div>
+                    <div class="text-sm sm:text-base">
                         <h4 class="mb-[22px] md:text-xl font-bold">Контакты</h4>
                         <main-footer class="space-y-4 md:space-y-5"/>
                     </div>
                 </div>
-                <div class="lg:mt-0 mt-[37px]">
+                <div class="lg:mt-0 mt-[37px] text-sm sm:text-base">
                     © Copyright 2021 — Куда Пицца
                 </div>
             </div>
@@ -314,5 +339,15 @@ defineExpose({cartInstance})
 .action-list-enter-from,
 .action-list-leave-to {
     transform: translateY(-40px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
