@@ -20,6 +20,7 @@ const order = reactive<IOrderEssentials>({
     slug: "",
     thumbnail: "",
     price: 0,
+    sale_price: null,
     title: ""
 })
 
@@ -47,6 +48,7 @@ const makeOrder = () => {
     order.thumbnail = product.value!.thumbnail
     order.title = product.value!.title
     order.price = product.value!.price
+    order.sale_price = product.value!.sale_price
 
     modalController.resolve(order)
 
