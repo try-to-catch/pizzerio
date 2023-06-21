@@ -19,7 +19,7 @@ const notifyBaseComponent = (product: IProductCardEssentials) => {
     <div>
         <div class="flex justify-between sm:mb-8 mb-5 items-center">
             <h3 class="sm:text-[40px] sm:leading-[48px] text-[28px] leading-[32px] font-semibold">
-                <Link :href="route('products')">
+                <Link :href="route('categories.show', {category: category.slug})">
                     {{ category.title }}
                 </Link>
             </h3>
