@@ -26,11 +26,9 @@ class HomeController extends Controller
             $resolvedProduct = ProductDetailsResource::make($product)->resolve();
         }
 
-        if(Cache::has('home_page_categories')){
+        if (Cache::has('home_page_categories')) {
             $categories = Cache::get('home_page_categories');
-        }
-
-        if (Cache::missing('home_page_categories')) {
+        } else {
             $categories = Category::query()
                 ->limit(7)
                 ->withWhereHas('products', function (Builder $query) {
