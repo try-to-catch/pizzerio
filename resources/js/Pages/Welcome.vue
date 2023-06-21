@@ -23,11 +23,8 @@ const props = defineProps<{
 
 const {categories, auth} = props
 
-const selectedProductThumbnail = ref('')
 const productModal = ref<InstanceType<typeof ProductModal> | null>(null)
 const openProductModal = (product: IProductCardEssentials) => {
-    selectedProductThumbnail.value = product.thumbnail
-
     router.reload({
         data: {
             p: product.slug
@@ -51,7 +48,7 @@ const openModal = async (product: IProductDetails) => {
 
     if (modalResult) {
         mainLayout.value?.cartInstance?.addToCart(modalResult)
-            mainLayout.value?.displayMessage('Товар добавлен в корзину')
+        mainLayout.value?.displayMessage('Товар добавлен в корзину')
     }
 }
 
@@ -89,7 +86,7 @@ watchEffect(() => document.body.style.overflow = isProductSelected.value ? 'hidd
                     </li>
                     <li v-for="category in categories">
                         <Link
-                            :href="route('products')"
+                            :href="route('categories.show', {category: category.slug})"
                             class="flex lg:flex-col items-center py-5 lg:px-0 px-3 lg:w-full lg:h-[104px] h-10 bg-white rounded-xl lg:text-lg text-sm">
                             <div class="lg:h-8 lg:w-8 h-6 w-6 lg:mb-2 mr-2 lg:mr-0">
                                 <img :alt="`${category.title} icon`" :src="category.icon">
