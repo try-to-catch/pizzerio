@@ -1,7 +1,7 @@
 // I'm practising writing composable with OOP approach using Copilot
 
 import type {IOrderEssentials} from "@/types/IOrderEssentials";
-import {reactive} from "vue";
+import {computed, reactive} from "vue";
 import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 
 export default class UseCart {
@@ -12,6 +12,24 @@ export default class UseCart {
     }
 
     public cart = reactive<IOrderEssentialsWithQuantity[]>([])
+
+    public formattedItemsCount = computed((): "9+" | number => {
+        const cartItemsCount = this.cart.length
+
+        if (cartItemsCount > 9) {
+            return '9+'
+        }
+
+        return cartItemsCount
+    })
+
+    public formattedTotalPrice = computed((): string => {
+        const total = this.cart.reduce((acc, item) => {
+            return acc + (item.sale_price || item.price) * item.quantity
+        }, 0)
+
+        return total > 999 ? '999$+' : total + '$'
+    })
 
     protected loadCart = () => {
         // load cart from local storage

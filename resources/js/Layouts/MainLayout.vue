@@ -12,9 +12,10 @@ import MainFooter from "@/Components/MainFooter.vue";
 import {Link, router} from "@inertiajs/vue3";
 import {IUserEssentials} from "@/types/IUserEssentials";
 import UseCart from "@/composables/Cart";
-import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 
 const {user} = defineProps<{ user?: IUserEssentials }>()
+
+const cartInstance = new UseCart()
 
 const isActionListOpen = ref(false)
 const isMenuOpen = ref(false)
@@ -31,8 +32,6 @@ const resizeEvent = (ev) => {
     }
 };
 
-const cartInstance = new UseCart()
-const cart = ref<IOrderEssentialsWithQuantity[]>(cartInstance.cart)
 
 onMounted(() => {
     addEventListener('resize', resizeEvent)
@@ -48,24 +47,6 @@ const isOverlayOpen = computed(() => {
 
 const headerHeight = computed((): 106 | 66 => {
     return window.location.pathname === '/' ? 106 : 66;
-})
-
-const formattedCartItemsCount = computed((): "9+" | number => {
-    const cartItemsCount = cart.value.length
-
-    if (cartItemsCount > 9) {
-        return '9+'
-    }
-
-    return cartItemsCount
-})
-
-const formattedCartTotalPrice = computed((): string => {
-    const total = cart.value.reduce((acc, item) => {
-        return acc + item.price * item.quantity
-    }, 0)
-
-    return (total > 999 ? '999+' : total) + '$'
 })
 
 const message = ref('')
@@ -94,7 +75,7 @@ defineExpose({cartInstance, displayMessage})
     <div class="font-sans-serif w-full min-h-[100vh] flex flex-col justify-between">
         <header class="fixed top-0 right-0 w-full z-30">
             <!--top header-->
-            <div :class="{hidden: !$page.url.startsWith('/')}" class="bg-white">
+            <div :class="{hidden: $page.url.split('?')[0] !== '/'}" class="bg-white">
                 <div class="h-10 flex justify-between sm:container sm:mx-auto mx-5">
                     <div class="space-x-10 flex items-center text-sm justify-between lg:justify-start lg:w-auto w-full">
                         <div class="flex items-center">
@@ -149,7 +130,7 @@ defineExpose({cartInstance, displayMessage})
                             <pizza-icon class="w-8 h-8"/>
                             <span class="ml-3 md:text-xl whitespace-nowrap text-lg">Куда пицца</span>
                         </Link>
-                        <nav :class="{'lg:flex': !$page.url.startsWith('/')}"
+                        <nav :class="{'lg:flex': $page.url.split('?')[0] !== '/'}"
                              class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
                             <ul class="flex h-full">
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
@@ -190,8 +171,8 @@ defineExpose({cartInstance, displayMessage})
                     <div class="lg:flex hidden">
                         <div class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
-                            <span :class="[!$page.url.startsWith('/')? 'xl:block hidden': 'block']" class="text-white">
-                                {{ formattedCartTotalPrice }}
+                            <span :class="[$page.url.split('?')[0] !== '/'? 'xl:block hidden': 'block']" class="text-white">
+                                {{ cartInstance.formattedTotalPrice.value }}
                             </span>
                         </div>
                     </div>
@@ -271,7 +252,7 @@ defineExpose({cartInstance, displayMessage})
                 <cart-icon class="w-6 h-6"/>
                 <div
                     class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-xs">
-                    {{ formattedCartItemsCount }}
+                    {{ cartInstance.formattedItemsCount.value }}
                 </div>
             </div>
         </main>
