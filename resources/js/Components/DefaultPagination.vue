@@ -2,7 +2,8 @@
     <div v-if="links.length > 3">
         <div class="flex flex-wrap -mb-1">
             <template v-for="(link, p) in links" :key="p">
-                <div v-if="link.url === null" class="cursor-pointer mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded"
+                <div v-if="link.url === null"
+                     class="cursor-pointer mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded"
                      v-html="link.label"/>
                 <Link v-else
                       :class="{
@@ -19,6 +20,7 @@
 
 <script lang="ts" setup>
 import {Link} from "@inertiajs/vue3";
+import type {ILink} from "@/types/IPagination";
 
-defineProps<{ links: any }>()
+defineProps<{ links: ILink[] }>()
 </script>
