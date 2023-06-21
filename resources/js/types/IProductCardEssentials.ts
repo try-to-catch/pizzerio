@@ -4,7 +4,7 @@ export interface IProductCardEssentials{
     readonly slug: string;
     readonly ingredients: string;
     readonly price: number;
-    readonly sale_price?: number | null;
+    readonly sale_price: number | null;
     readonly thumbnail: string;
-    readonly banner?: string | null;
+    readonly banner: string | null;
 }

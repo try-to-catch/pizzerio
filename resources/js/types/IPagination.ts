@@ -15,8 +15,8 @@ export interface IPagination {
 }
 
 
-interface ILink {
-    url?: string;
+export interface ILink {
+    url?: string | null;
     label: string;
     active: boolean;
 }
