@@ -16,7 +16,7 @@ const {product} = defineProps<{ product: IProductCardEssentials }>()
         </div>
         <div class="sm:m-5 sm:mt-4 ml-3 flex flex-col sm:justify-between justify-center grow">
             <h2 class="font-semibold capitalize text-sm sm:text-lg">{{ product.title }}</h2>
-            <p class="sm:mt-3 mt-2 line-clamp-2 text-xs sm:text-base pb-2.5 sm:pb-0">{{ product.ingredients }}</p>
+            <p class="sm:mt-3 mt-2 line-clamp-2 text-xs sm:text-base mb-2.5 sm:mb-0">{{ product.ingredients }}</p>
             <div class="sm:flex hidden justify-between items-center mt-4">
                 <button class="text-white bg-primary py-[13px] px-8 rounded-md hover:bg-orange-600 ease-in-out duration-300">Выбрать</button>
                 <span v-if="!product.sale_price" class="text-primary font-semibold text-lg">от {{ product.price }}$</span>
