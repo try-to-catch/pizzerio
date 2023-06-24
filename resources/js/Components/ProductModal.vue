@@ -17,6 +17,7 @@ const isOpen = ref(false)
 const isImageLoaded = ref(false)
 const product = ref<IProductDetails | null>(null)
 const order = reactive<IOrderEssentials>({
+    id: 0,
     slug: "",
     thumbnail: "",
     price: 0,
@@ -27,7 +28,6 @@ const order = reactive<IOrderEssentials>({
 const open = (productValue: IProductDetails) => {
     //reset states
     isImageLoaded.value = false
-
 
     isOpen.value = true
 
@@ -44,6 +44,7 @@ const open = (productValue: IProductDetails) => {
 
 
 const makeOrder = () => {
+    order.id = product.value!.id
     order.slug = product.value!.slug
     order.thumbnail = product.value!.thumbnail
     order.title = product.value!.title
