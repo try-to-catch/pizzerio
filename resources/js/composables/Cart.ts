@@ -3,6 +3,7 @@
 import type {IOrderEssentials} from "@/types/IOrderEssentials";
 import {computed, reactive} from "vue";
 import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
+import {router} from "@inertiajs/vue3";
 
 export default class UseCart {
 
@@ -42,30 +43,21 @@ export default class UseCart {
 
 
     public addToCart = (product: IOrderEssentials) => {
-        // check if product already exists in cart
-        // if not, add it to cart
-        // if it exists, increment quantity
-        // save cart to local storage
-        // return cart
         const exists = this.cart.find(item => item.slug === product.slug)
 
         if (!exists) {
-            //save product in new variable and add quantity property
             const productWithQuantity = {...product, quantity: 1}
 
             this.cart.push(productWithQuantity)
             this.saveCart()
-
-            return productWithQuantity
         }
 
-        // in this case we have already product in cart, and we need to increment quantity
         if (exists) {
             exists.quantity++
             this.saveCart()
-
-            return exists
         }
+
+        router.post(route('cart.add'), {product_id: product.id})
     }
 
     public removeFromCart = (product: IOrderEssentialsWithQuantity) => {
