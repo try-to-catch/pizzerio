@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Category\ShowController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -20,5 +21,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::prefix('cart')->controller(CartController::class)->name('cart.')->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/add', 'add')->name('add');
+//    Route::patch('/{productId}', 'update')->name('update');
+//    Route::delete('/{productId}', 'remove')->name('remove');
+});
+
 
 require __DIR__.'/auth.php';
