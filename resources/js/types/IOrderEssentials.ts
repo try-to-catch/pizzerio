@@ -1,4 +1,5 @@
 export interface IOrderEssentials {
+    id: number;
     slug: string;
     title: string;
     price: number;
