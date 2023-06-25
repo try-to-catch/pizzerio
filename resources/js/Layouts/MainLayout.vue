@@ -67,7 +67,6 @@ const logout = () => {
 }
 
 
-
 defineExpose({cartInstance, displayMessage})
 </script>
 
@@ -169,12 +168,14 @@ defineExpose({cartInstance, displayMessage})
                     </div>
 
                     <div class="lg:flex hidden">
-                        <div class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
+                        <Link :href="route('cart.index')"
+                              class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
-                            <span :class="[$page.url.split('?')[0] !== '/'? 'xl:block hidden': 'block']" class="text-white">
+                            <span :class="[$page.url.split('?')[0] !== '/'? 'xl:block hidden': 'block']"
+                                  class="text-white">
                                 {{ cartInstance.formattedTotalPrice.value }}
                             </span>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -235,7 +236,7 @@ defineExpose({cartInstance, displayMessage})
         </transition>
 
         <main :style="{marginTop: headerHeight + 'px'}" class="grow relative">
-            <transition mode="in-out"  duration="300" name="fade">
+            <transition duration="300" mode="in-out" name="fade">
                 <div v-if="isMessageShouldBeDisplayed" :style="{top: headerHeight + 16 +'px'}"
                      class="fixed flex justify-center w-full z-20">
                     <div class="py-3 px-8  text-white bg-primary rounded-full text-sm sm:text-base cursor-pointer"
@@ -245,16 +246,16 @@ defineExpose({cartInstance, displayMessage})
                 </div>
             </transition>
 
-            <slot/>
+            <slot class="h-full"/>
 
-            <div
-                class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full flex lg:hidden">
+            <Link :href="route('cart.index')"
+                  class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full flex lg:hidden">
                 <cart-icon class="w-6 h-6"/>
                 <div
                     class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-xs">
                     {{ cartInstance.formattedItemsCount.value }}
                 </div>
-            </div>
+            </Link>
         </main>
 
         <footer class="bg-white py-8">
