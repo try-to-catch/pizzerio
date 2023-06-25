@@ -22,6 +22,7 @@ module.exports = {
                 'gray-bg': '#F9F9F9',
                 'gray-border': '#F0F0F0',
                 'gray-text': '#A5A5A5',
+                'black-text': '#191919',
                 'red-bg': '#E23535',
             },
             animation: {
