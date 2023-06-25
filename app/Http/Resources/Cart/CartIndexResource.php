@@ -18,7 +18,7 @@ class CartIndexResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => '/storage/' . $this->thumbnail,
             'price' => $this->price,
             'sale_price' => $this->sale_price,
             'quantity' => $this->pivot->quantity,
