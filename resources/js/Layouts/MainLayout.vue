@@ -46,7 +46,8 @@ const isOverlayOpen = computed(() => {
 })
 
 const headerHeight = computed((): 106 | 66 => {
-    return window.location.pathname === '/' ? 106 : 66;
+
+    return window.location.pathname.includes('/categories') ? 66 : 106;
 })
 
 const message = ref('')
@@ -74,7 +75,10 @@ defineExpose({cartInstance, displayMessage})
     <div class="font-sans-serif w-full min-h-[100vh] flex flex-col justify-between">
         <header class="fixed top-0 right-0 w-full z-30">
             <!--top header-->
-            <div :class="{hidden: $page.url.split('?')[0] !== '/'}" class="bg-white">
+            <div :class="{
+                hidden: $page.url.startsWith('/categories'),
+                'hidden sm:block': $page.url.startsWith('/cart'),
+            }" class="bg-white">
                 <div class="h-10 flex justify-between sm:container sm:mx-auto mx-5">
                     <div class="space-x-10 flex items-center text-sm justify-between lg:justify-start lg:w-auto w-full">
                         <div class="flex items-center">
@@ -122,7 +126,7 @@ defineExpose({cartInstance, displayMessage})
                 </div>
             </div>
             <!--bottom header-->
-            <div class="border-y border-gray-200 bg-white">
+            <div class="border-b border-gray-200 bg-white" :class="{'border-t': !$page.url.startsWith('/categories')}">
                 <div class="h-16 flex items-center sm:container sm:mx-auto mx-5 justify-between">
                     <div class="flex items-center h-full lg:justify-start justify-between lg:w-auto w-full">
                         <Link :href="route('home')" class="flex">
@@ -130,7 +134,7 @@ defineExpose({cartInstance, displayMessage})
                             <span class="ml-3 md:text-xl whitespace-nowrap text-lg">Куда пицца</span>
                         </Link>
                         <nav :class="{'lg:flex': $page.url.split('?')[0] !== '/'}"
-                             class="ml-12 lg:ml-3 xl:ml-12 h-full  hidden">
+                             class="ml-12 lg:ml-3 xl:ml-12 h-full hidden">
                             <ul class="flex h-full">
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
                                     <a class="h-full w-full flex items-center" href="#">Акции</a>
@@ -171,8 +175,7 @@ defineExpose({cartInstance, displayMessage})
                         <Link :href="route('cart.index')"
                               class="bg-primary py-2 px-4 flex space-x-2 rounded-[4px] w-full cursor-pointer">
                             <cart-icon/>
-                            <span :class="[$page.url.split('?')[0] !== '/'? 'xl:block hidden': 'block']"
-                                  class="text-white">
+                            <span class="text-white">
                                 {{ cartInstance.formattedTotalPrice.value }}
                             </span>
                         </Link>
@@ -197,28 +200,28 @@ defineExpose({cartInstance, displayMessage})
                 </div>
                 <div class="py-2 border-b border-gray-200">
                     <ul class="normal-case flex flex-col sm:container sm:mx-auto mx-5">
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Акции</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">О компании</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Пользовательское соглашение</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Условия гарантии</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Ресторан</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Контакты</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Поддержка</a>
                         </li>
-                        <li class="h-full hover:bg-primary hover:text-white w-full">
+                        <li class="h-full hover:text-primary hover:font-semibold w-full">
                             <a class="w-full flex py-2" href="#">Отследить заказ</a>
                         </li>
                     </ul>
@@ -248,8 +251,8 @@ defineExpose({cartInstance, displayMessage})
 
             <slot class="h-full"/>
 
-            <Link :href="route('cart.index')"
-                  class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full flex lg:hidden">
+            <Link :href="route('cart.index')" :class="[$page.url.split('?')[0] !== '/cart' ? 'flex lg:hidden' : 'hidden']"
+                  class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full">
                 <cart-icon class="w-6 h-6"/>
                 <div
                     class="absolute -top-0.5 -right-0.5 bg-white border border-primary text-primary w-5 h-5 flex justify-center items-center rounded-full text-xs">
@@ -258,7 +261,7 @@ defineExpose({cartInstance, displayMessage})
             </Link>
         </main>
 
-        <footer class="bg-white py-8">
+        <footer class="bg-white py-8" :class="{hidden: $page.url.startsWith('/cart')}">
             <div class="sm:container sm:mx-auto mx-5">
                 <div class="grid lg:grid-cols-4  sm:grid-cols-2 grid-cols-1 gap-6">
                     <div class="flex">
