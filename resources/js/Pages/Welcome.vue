@@ -39,17 +39,13 @@ const openModal = async (product: IProductDetails) => {
     const modalResult: null | IOrderEssentials = await productModal.value?.open(product)
     isProductSelected.value = false
 
-    if (!modalResult) {
-        const newUrl = window.location.href.split('?')[0]
-        window.history.pushState({path: newUrl}, '', newUrl)
-
-        isProductSelected.value = false
-    }
-
     if (modalResult) {
         mainLayout.value?.cartInstance?.addToCart(modalResult)
         mainLayout.value?.displayMessage('Товар добавлен в корзину')
     }
+
+    const newUrl = window.location.href.split('?')[0]
+    window.history.pushState({path: newUrl}, '', newUrl)
 }
 
 onMounted(() => {
@@ -101,7 +97,7 @@ watchEffect(() => document.body.style.overflow = isProductSelected.value ? 'hidd
                 <ul :class="[$style['scrollbar-thin']]"
                     class="lg:grid lg:grid-cols-4 lg:gap-[30px] space-x-5 lg:space-x-0 flex overflow-auto pb-[6px]">
                     <li>
-                        <scroll-card caption="3 средние пиццы от 999 рублей"
+                        <scroll-card caption="3 средние пиццы от 499 гривен"
                                      class="h-80 w-[280px] lg:h-[340px] lg:w-full"
                                      image="/images/poster_1.png"/>
                     </li>
@@ -111,7 +107,7 @@ watchEffect(() => document.body.style.overflow = isProductSelected.value ? 'hidd
                                      image="/images/poster_2.png"/>
                     </li>
                     <li>
-                        <scroll-card caption="3 средние пиццы от 999 рублей"
+                        <scroll-card caption="3 средние пиццы от 499 гривен"
                                      class="h-80 w-[280px] lg:h-[340px] lg:w-full"
                                      image="/images/poster_1.png"/>
                     </li>
