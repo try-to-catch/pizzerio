@@ -3,9 +3,9 @@
 import type {IOrderEssentials} from "@/types/IOrderEssentials";
 import {computed, reactive} from "vue";
 import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
-import {router} from "@inertiajs/vue3";
+import axios from "axios";
 
-export default class UseCart {
+export default class Cart {
 
     public constructor() {
         // when we create new instance of this class, we want to load cart from local storage
@@ -42,44 +42,59 @@ export default class UseCart {
     }
 
 
-    public addToCart = (product: IOrderEssentials) => {
+    public addToCart = async (product: IOrderEssentials) => {
         const exists = this.cart.find(item => item.slug === product.slug)
 
-        if (!exists) {
-            const productWithQuantity = {...product, quantity: 1}
+        try {
+            await axios.post(route('cart.add'), {product_id: product.id});
 
-            this.cart.push(productWithQuantity)
-            this.saveCart()
-        }
+            if (!exists) {
+                const productWithQuantity = {...product, quantity: 1};
 
-        if (exists) {
-            exists.quantity++
-            this.saveCart()
-        }
+                this.cart.push(productWithQuantity);
+                this.saveCart();
+            }
 
-        router.post(route('cart.add'), {product_id: product.id})
-    }
-
-    public removeFromCart = (product: IOrderEssentialsWithQuantity) => {
-        // remove product from cart
-        // save cart to local storage
-        // return cart
-        const index = this.cart.findIndex((item) => item.slug === product.slug);
-
-        if (index !== -1) {
-            this.cart.splice(index, 1);
-            this.saveCart();
+            if (exists) {
+                exists.quantity++;
+                this.saveCart();
+            }
+        } catch (error) {
+            console.error(error);
         }
 
         return this.cart
     }
 
+    public remove = async (productId: number) => {
+        // remove product from cart
+        // save cart to local storage
+        // return cart
+        const index = this.cart.findIndex((item) => item.id === productId);
+
+        try {
+            await axios.delete(route('cart.remove', {productId: productId}));
+
+            if (index !== -1) {
+                this.cart.splice(index, 1);
+                this.saveCart();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        return this.cart
+    }
+
+
     //this method is increasing quantity of product in cart if second parameter is true in other case it's decreasing
-    public changeQuantity = (product: IOrderEssentialsWithQuantity, increase: boolean = true) => {
-        const exists = this.cart.find(item => item.slug === product.slug)
+    public changeQuantity = async (productId: number, quantity: number) => {
+        const exists = this.cart.find(item => item.id === productId)
+
+        await axios.patch(route('cart.update', {productId}), {quantity})
 
         if (exists) {
-            increase ? exists.quantity++ : exists.quantity--
+            exists.quantity = quantity
             this.saveCart()
         }
 
