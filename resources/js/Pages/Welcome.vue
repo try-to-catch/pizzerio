@@ -7,7 +7,7 @@ import ScrollCard from "@/Components/ScrollCard.vue";
 import SendIcon from "@/Components/Icons/SendIcon.vue";
 import LocationIcon from "@/Components/Icons/LocationIcon.vue";
 import type {ICategoryEssentialsWithProductCards} from "@/types/ICategoryEssentialsWithProductCards";
-import type {IAuthData} from "@/types/IAuthData";
+import type {IAuthGlobalData} from "@/types/IAuthGlobalData";
 import type {IProductDetails} from "@/types/IProductDetails";
 import {onMounted, ref, watchEffect} from "vue";
 import ProductModal from "@/Components/ProductModal.vue";
@@ -17,7 +17,7 @@ import type {IOrderEssentials} from "@/types/IOrderEssentials";
 
 const props = defineProps<{
     categories: ICategoryEssentialsWithProductCards[],
-    auth: IAuthData,
+    auth: IAuthGlobalData,
     selectedProduct?: IProductDetails,
 }>()
 
@@ -40,7 +40,7 @@ const openModal = async (product: IProductDetails) => {
     isProductSelected.value = false
 
     if (modalResult) {
-        mainLayout.value?.cartInstance?.addToCart(modalResult)
+        mainLayout.value?.cartInstance?.add(modalResult)
         mainLayout.value?.displayMessage('Товар добавлен в корзину')
     }
 

@@ -1,5 +1,5 @@
 import type {IUserEssentials} from "@/types/IUserEssentials";
 
-export interface IAuthData {
+export interface IAuthGlobalData {
     user?: IUserEssentials
 }
