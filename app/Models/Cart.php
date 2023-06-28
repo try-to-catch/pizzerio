@@ -18,4 +18,14 @@ class Cart extends Model
     {
         return $this->belongsToMany(Product::class)->withPivot('quantity')->withTimestamps();
     }
+
+    public function getTotalAttribute()
+    {
+        return $this->products->sum(fn($product) => $product->pivot->quantity * ($product->sale_price ?? $product->price));
+    }
+
+    public function getCountAttribute()
+    {
+        return $this->products->sum('pivot.quantity');
+    }
 }
