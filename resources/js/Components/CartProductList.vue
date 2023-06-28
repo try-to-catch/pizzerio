@@ -2,17 +2,20 @@
 import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 import NumericInput from "@/Components/Form/NumericInput.vue";
 import CrossIcon from "@/Components/Icons/CrossIcon.vue";
+import type {IOrderEssentials} from "@/types/IOrderEssentials";
 
 const {products} = defineProps<{ products: IOrderEssentialsWithQuantity[] }>()
 const emit = defineEmits<{
     (e: 'update:products', value: IOrderEssentialsWithQuantity[]): void,
-    (e: 'removeItem', value: number): void,
-    (e: 'updateItem', value: { id: number, quantity: number }): void,
+    (e: 'removeItem', value: IOrderEssentials): void,
+    (e: 'updateItem', value: { product: IOrderEssentialsWithQuantity, values: IProductQuantityValues }): void,
 
 }>()
 
-const updateCartItem = (id: number, quantity) => {
-    emit('updateItem', {id, quantity})
+const updateCartItem = (product: IOrderEssentialsWithQuantity, values: IProductQuantityValues) => {
+    product.quantity = values.new
+
+    emit('updateItem', {product, values})
 }
 
 </script>
@@ -33,8 +36,8 @@ const updateCartItem = (id: number, quantity) => {
                         <p class="text-black-text mt-2 text-xs sm:text-base">Традиционное тесто, 23 см</p>
                     </div>
                     <div class="flex mt-2 md:mt-0 justify-between">
-                        <numeric-input v-model="product.quantity" class="mr-10 items-center"
-                                       @update:modelValue="updateCartItem(product.id, $event)"
+                        <numeric-input :model-value="product.quantity" class="mr-10 items-center"
+                                       @update:modelValue="updateCartItem(product, $event)"
                         />
                         <div class="sm:text-xl font-semibold text-primary flex items-center text-sm">
                             {{ product.sale_price || product.price }} $
@@ -43,7 +46,7 @@ const updateCartItem = (id: number, quantity) => {
                 </div>
 
                 <cross-icon class="absolute top-2.5 right-2.5 sm:w-4 sm:h-4 w-3 h-3 cursor-pointer"
-                            fill="#A5A5A5" @click="emit('removeItem', product.id)"/>
+                            fill="#A5A5A5" @click="emit('removeItem', product)"/>
             </li>
         </TransitionGroup>
     </ul>
