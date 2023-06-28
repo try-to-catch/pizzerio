@@ -1,103 +1,63 @@
-// I'm practising writing composable with OOP approach using Copilot
-
 import type {IOrderEssentials} from "@/types/IOrderEssentials";
-import {computed, reactive} from "vue";
+import {computed, ref} from "vue";
 import type {IOrderEssentialsWithQuantity} from "@/types/IOrderEssentialsWithQuantity";
 import axios from "axios";
+import {usePage} from "@inertiajs/vue3";
+import {ICartGlobalData} from "@/types/ICartGlobalData";
 
 export default class Cart {
 
+    public count = ref(0)
+    public total = ref(0)
+
     public constructor() {
-        // when we create new instance of this class, we want to load cart from local storage
-        this.loadCart()
+        const cartGlobalData = usePage().props['cart'] as ICartGlobalData | undefined
+
+        if (cartGlobalData) {
+            this.count.value = cartGlobalData.count || 0
+            this.total.value = cartGlobalData.total || 0
+        }
     }
 
-    public cart = reactive<IOrderEssentialsWithQuantity[]>([])
-
     public formattedItemsCount = computed((): "9+" | number => {
-        const cartItemsCount = this.cart.length
-
-        if (cartItemsCount > 9) {
-            return '9+'
-        }
-
-        return cartItemsCount
+        return this.count.value > 9 ? '9+' : this.count.value
     })
 
     public formattedTotalPrice = computed((): string => {
-        const total = this.cart.reduce((acc, item) => {
-            return acc + (item.sale_price || item.price) * item.quantity
-        }, 0)
-
-        return total > 999 ? '999$+' : total + '$'
+        return this.total.value.toFixed(2) + '$'
     })
 
-    protected loadCart = () => {
-        // load cart from local storage
-        return this.cart.push(...JSON.parse(localStorage.getItem('cart') || '[]'))
-    }
-    protected saveCart = () => {
-        // save cart to local storage
-        localStorage.setItem('cart', JSON.stringify(this.cart))
-    }
+    public formattedFinalTotalPrice = computed((): string => {
+        return this.total.value.toLocaleString() + '$'
+    })
 
-
-    public addToCart = async (product: IOrderEssentials) => {
-        const exists = this.cart.find(item => item.slug === product.slug)
-
-        try {
-            await axios.post(route('cart.add'), {product_id: product.id});
-
-            if (!exists) {
-                const productWithQuantity = {...product, quantity: 1};
-
-                this.cart.push(productWithQuantity);
-                this.saveCart();
-            }
-
-            if (exists) {
-                exists.quantity++;
-                this.saveCart();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-
-        return this.cart
+    public add = async (product: IOrderEssentials) => {
+        return await axios.post(route('cart.add'), {product_id: product.id}).then(() => {
+            this.total.value += product.sale_price ?? product.price
+            this.count.value++;
+        })
     }
 
-    public remove = async (productId: number) => {
-        // remove product from cart
-        // save cart to local storage
-        // return cart
-        const index = this.cart.findIndex((item) => item.id === productId);
-
-        try {
-            await axios.delete(route('cart.remove', {productId: productId}));
-
-            if (index !== -1) {
-                this.cart.splice(index, 1);
-                this.saveCart();
-            }
-        } catch (error) {
-            console.error(error);
-        }
-
-        return this.cart
+    public remove = async (product: IOrderEssentials) => {
+        return await axios.delete(route('cart.remove', {productId: product.id}))
+            .then(() => {
+                this.total.value -= product.sale_price ?? product.price
+                this.count.value--
+            })
     }
 
+    public changeQuantity = async (product: IOrderEssentialsWithQuantity, values: IProductQuantityValues) => {
+        return await axios.patch(route('cart.update', {productId: product.id}), {quantity: values.new})
+            .then(() => {
+                const quantityDiff = values.new - values.old
 
-    //this method is increasing quantity of product in cart if second parameter is true in other case it's decreasing
-    public changeQuantity = async (productId: number, quantity: number) => {
-        const exists = this.cart.find(item => item.id === productId)
+                this.total.value += (product.sale_price ?? product.price) * quantityDiff
+                this.count.value += quantityDiff
+            })
+    }
 
-        await axios.patch(route('cart.update', {productId}), {quantity})
-
-        if (exists) {
-            exists.quantity = quantity
-            this.saveCart()
-        }
-
-        return this.cart
+    public clear = () => {
+        this.total.value = 0
+        this.count.value = 0
     }
 }
