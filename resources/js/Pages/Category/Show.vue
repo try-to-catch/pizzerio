@@ -65,7 +65,7 @@ const openModal = async (product: IProductDetails) => {
     }
 
     if (modalResult) {
-        mainLayout.value?.cartInstance?.addToCart(modalResult)
+        mainLayout.value?.cartInstance?.add(modalResult)
         mainLayout.value?.displayMessage('Товар добавлен в корзину')
     }
 }
