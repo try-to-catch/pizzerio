@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\User\UserMinResource;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -32,12 +33,22 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
-        $userData = $user?UserMinResource::make($user)->resolve():$user;
+        $userData = $user ? UserMinResource::make($user)->resolve() : $user;
+
+        $cart = Cart::query()
+            ->with(['products' => function ($query) {
+                $query->select('price', 'sale_price')->withPivot('quantity');
+            }])
+            ->firstOrCreate(['session_id' => session()->getId()]);
 
         return array_merge(parent::share($request), [
             'message' => $request->session()->get('message'),
             'auth' => [
                 'user' => $userData,
+            ],
+            'cart' => [
+                'count' => $cart->count ?? 0,
+                'total' => $cart->total ?? 0,
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
