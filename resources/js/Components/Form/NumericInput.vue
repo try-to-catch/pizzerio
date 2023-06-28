@@ -1,19 +1,28 @@
 <script lang="ts" setup>
-const FLOUR = 1
-const CEIL = 99
+const FLOUR = 0
+const CEIL = 100
 
 const props = defineProps<{ modelValue: number }>()
-const emit = defineEmits<{ (e: 'update:modelValue', value: number): void }>()
+const emit = defineEmits<{ (e: 'update:modelValue', value: IProductQuantityValues): void }>()
 const stepValue = (stepForward: boolean) => {
-    if (stepForward) {
-        if (props.modelValue < CEIL) {
-            emit('update:modelValue', props.modelValue + 1)
-        }
+    const values = {
+        old: props.modelValue,
+        new: stepForward ? props.modelValue + 1 : props.modelValue - 1
     }
-    if (!stepForward) {
-        if (props.modelValue > FLOUR) {
-            emit('update:modelValue', props.modelValue - 1)
-        }
+
+    if (props.modelValue > FLOUR && props.modelValue < CEIL) {
+        emit('update:modelValue', values)
+    }
+}
+
+const setValue = (value: number) => {
+    const values = {
+        old: props.modelValue,
+        new: value
+    }
+
+    if (value > FLOUR && value < CEIL) {
+        emit('update:modelValue', values)
     }
 }
 </script>
@@ -24,11 +33,11 @@ const stepValue = (stepForward: boolean) => {
               @click="stepValue(false)">-</span>
 
         <input :class="$style['input-arrows']"
-            :max="CEIL"
-            :min="FLOUR" :value="modelValue"
-            class="p-0 text-primary bg-light-primary h-5 w-10 text-center border-none outline-none ring-offset-[0px!important] text-sm sm:text-base"
-            type="number"
-            @input="emit('update:modelValue', Number($event.target.value))"
+               :max="CEIL"
+               :min="FLOUR" :value="modelValue"
+               class="p-0 text-primary bg-light-primary h-5 w-10 text-center border-none outline-none ring-offset-[0px!important] text-sm sm:text-base"
+               type="number"
+               @input="setValue(Number($event.target.value))"
         >
 
         <span class="text-primary pr-2 pl-1.5 md:py-1.5 py-1 cursor-pointer select-none"
