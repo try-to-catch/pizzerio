@@ -20,7 +20,7 @@ withDefaults(defineProps<{
         </div>
         <textarea :id="id" :class="{'border border-red-700': errors }" :required="required"
                   :rows="rows" :value="modelValue" :placeholder="placeholder"
-                  class="block px-4 pt-[13px] w-full sm:text-base text-sm text-black-text rounded-md border border-gray-border focus:ring-transparent focus:border-primary resize-none"
+                  class="placeholder:text-gray-text block px-4 pt-[13px] w-full sm:text-base text-sm text-black-text rounded-md border border-gray-border focus:ring-transparent focus:border-primary resize-none"
                   @input="$emit('update:modelValue', $event.target.value)"></textarea>
     </div>
 </template>

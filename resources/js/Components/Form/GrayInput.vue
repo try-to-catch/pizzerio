@@ -21,7 +21,7 @@ defineEmits<{ 'update:ModelValue': (value: string) => void }>()
         <input :placeholder="placeholder" :required="required"
                :type="type"
                :value="modelValue"
-               class="mt-2 border border-gray-border text-gray-black-text text-sm rounded-lg focus:ring-transparent focus:border-orange-500 block w-full py-[13px] px-4 placeholder:text-gray-text" @input="$emit('update:modelValue', $event.target.value)">
+               class="mt-2 border border-gray-border text-black-text text-sm rounded-lg focus:ring-transparent focus:border-orange-500 block w-full py-[13px] px-4 placeholder:text-gray-text" @input="$emit('update:modelValue', $event.target.value)">
     </label>
 </template>
 

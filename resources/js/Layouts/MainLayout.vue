@@ -126,7 +126,7 @@ defineExpose({cartInstance, displayMessage})
                 </div>
             </div>
             <!--bottom header-->
-            <div class="border-b border-gray-200 bg-white" :class="{'border-t': !$page.url.startsWith('/categories')}">
+            <div :class="{'border-t': !$page.url.startsWith('/categories')}" class="border-b border-gray-200 bg-white">
                 <div class="h-16 flex items-center sm:container sm:mx-auto mx-5 justify-between">
                     <div class="flex items-center h-full lg:justify-start justify-between lg:w-auto w-full">
                         <Link :href="route('home')" class="flex">
@@ -251,7 +251,8 @@ defineExpose({cartInstance, displayMessage})
 
             <slot class="h-full"/>
 
-            <Link :href="route('cart.index')" :class="[$page.url.split('?')[0] !== '/cart' ? 'flex lg:hidden' : 'hidden']"
+            <Link :class="[$page.url.split('?')[0] !== '/cart' ? 'flex lg:hidden' : 'hidden']"
+                  :href="route('cart.index')"
                   class="fixed bottom-5 right-5 z-40 cursor-pointer p-4 bg-primary hover:bg-orange-600 ease-in-out duration-300 rounded-full">
                 <cart-icon class="w-6 h-6"/>
                 <div
@@ -261,7 +262,7 @@ defineExpose({cartInstance, displayMessage})
             </Link>
         </main>
 
-        <footer class="bg-white py-8" :class="{hidden: $page.url.startsWith('/cart')}">
+        <footer :class="{'hidden sm:block': $page.url.startsWith('/cart')}" class="bg-white py-8">
             <div class="sm:container sm:mx-auto mx-5">
                 <div class="grid lg:grid-cols-4  sm:grid-cols-2 grid-cols-1 gap-6">
                     <div class="flex">
