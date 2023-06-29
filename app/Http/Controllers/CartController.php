@@ -7,7 +7,6 @@ use App\Http\Requests\Cart\UpdateCartRequest;
 use App\Http\Resources\Cart\CartIndexResource;
 use App\Models\Cart;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,7 +26,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function add(AddToCartRequest $request): RedirectResponse
+    public function add(AddToCartRequest $request): JsonResponse
     {
         $productId = $request->validated()['product_id'];
 
@@ -42,10 +41,7 @@ class CartController extends Controller
             $cart->products()->attach($productId, ['quantity' => 1]);
         }
 
-        $previousPath = url()->previous();
-        $previousPath = preg_replace('/\?.*/', '', $previousPath);
-
-        return redirect()->to($previousPath);
+        return response()->json(['message' => 'Product added to cart']);
     }
 
     //update product quantity in cart
