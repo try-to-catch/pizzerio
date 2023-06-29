@@ -39,6 +39,8 @@ const updateCartItem = (val: { product: IOrderEssentialsWithQuantity, values: IP
 
         if (lastQuantity === values.new) {
             mainLayout.value?.cartInstance?.changeQuantity(product, values)
+        } else {
+            mainLayout.value?.cartInstance?.changeValuesLocally(product, values)
         }
     }, 1000)
 }
@@ -51,28 +53,28 @@ const form = useForm<IPreOrder>({
     },
     destination: {
         street: '',
-        house: '',
-        entrance: '',
-        floor: '',
-        apartment: '',
-        intercom: '',
+        house: null,
+        entrance: null,
+        floor: null,
+        apartment: null,
+        intercom: null,
     },
-    comment: '',
+    comment: null,
 })
 
 //method to submit form
 const submit = () => {
     console.log(form.data())
 
-    /*    form.post(route(''), {
-            onSuccess: () => {
-                mainLayout.value?.displayMessage('Заказ успешно оформлен')
-                mainLayout.value?.cartInstance?.clear()
-            },
-            onError: () => {
-                mainLayout.value?.displayMessage('Произошла ошибка')
-            }
-        })*/
+    form.post(route('order.store'), {
+        onSuccess: () => {
+            mainLayout.value?.displayMessage('Заказ успешно оформлен')
+            mainLayout.value?.cartInstance?.clear()
+        },
+        onError: () => {
+            mainLayout.value?.displayMessage('Произошла ошибка')
+        }
+    })
 }
 
 </script>
