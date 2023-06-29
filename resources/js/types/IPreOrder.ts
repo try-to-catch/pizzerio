@@ -1,7 +1,7 @@
 export interface IPreOrder {
     customer: ICustomerData;
     destination: IDestinationData;
-    comment: string;
+    comment: string | null;
 }
 
 export interface ICustomerData {
@@ -12,9 +12,9 @@ export interface ICustomerData {
 
 export interface IDestinationData {
     street: string;
-    house: string;
-    entrance: string;
-    floor: string;
-    apartment: string;
-    intercom: string;
+    house: string | null;
+    entrance: string | null;
+    floor: string | null;
+    apartment: string | null;
+    intercom: string | null;
 }
