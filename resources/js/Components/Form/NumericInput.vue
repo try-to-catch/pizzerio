@@ -10,7 +10,7 @@ const stepValue = (stepForward: boolean) => {
         new: stepForward ? props.modelValue + 1 : props.modelValue - 1
     }
 
-    if (props.modelValue > FLOUR && props.modelValue < CEIL) {
+    if (values.new > FLOUR && values.new < CEIL) {
         emit('update:modelValue', values)
     }
 }
