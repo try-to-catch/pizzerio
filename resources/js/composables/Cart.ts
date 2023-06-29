@@ -48,12 +48,14 @@ export default class Cart {
 
     public changeQuantity = async (product: IOrderEssentialsWithQuantity, values: IProductQuantityValues) => {
         return await axios.patch(route('cart.update', {productId: product.id}), {quantity: values.new})
-            .then(() => {
-                const quantityDiff = values.new - values.old
+            .then(() => this.changeValuesLocally(product, values))
+    }
 
-                this.total.value += (product.sale_price ?? product.price) * quantityDiff
-                this.count.value += quantityDiff
-            })
+    public changeValuesLocally = (product: IOrderEssentialsWithQuantity, values: IProductQuantityValues) => {
+        const quantityDiff = values.new - values.old
+
+        this.total.value += (product.sale_price ?? product.price) * quantityDiff
+        this.count.value += quantityDiff
     }
 
     public clear = () => {
