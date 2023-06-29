@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Category\ShowController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,10 @@ Route::prefix('cart')->controller(CartController::class)->name('cart.')->group(f
     Route::post('/add', 'add')->name('add');
     Route::patch('/{productId}', 'update')->name('update');
     Route::delete('/{productId}', 'remove')->name('remove');
+});
+
+Route::prefix('order')->controller(OrderController::class)->name('order.')->group(function () {
+    Route::post('/store', 'store')->name('store');
 });
 
 
