@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Models\Cart;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
@@ -28,7 +32,16 @@ class OrderController extends Controller
 
         session()->regenerate();
 
-        //TODO redirect to specific page with order details
-        return redirect()->route('home');
+        session(['last_order_id' => $order->id]);
+
+        return to_route('order.thanksView');
+    }
+
+    public function thanksForOrder(): Response|RedirectResponse
+    {
+        if (Gate::denies('showThanksForOrder')) {
+            return redirect()->route('home');
+        }
+        return Inertia::render('ThanksForOrder', ['order_id' => session('last_order_id')]);
     }
 }
