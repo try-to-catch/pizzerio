@@ -30,9 +30,13 @@ Route::prefix('cart')->controller(CartController::class)->name('cart.')->group(f
     Route::delete('/{productId}', 'remove')->name('remove');
 });
 
-Route::prefix('order')->controller(OrderController::class)->name('order.')->group(function () {
+Route::prefix('orders')->controller(OrderController::class)->name('order.')->group(function () {
+    Route::get('/thanks', 'thanksForOrder')->name('thanksView');
     Route::post('/store', 'store')->name('store');
 });
 
+require __DIR__ . '/auth.php';
 
-require __DIR__.'/auth.php';
+Route::fallback(function () {
+    return to_route('home');
+});
