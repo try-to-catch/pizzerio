@@ -11,7 +11,7 @@ import FacebookIcon from "@/Components/Icons/FacebookIcon.vue";
         <li>
             <a class="flex items-center" href="tel:+3806677889900">
                 <phone-icon class="mr-3"/>
-                +38 (066) 77-88-9900</a>
+                +38 (066) 777-88-99</a>
         </li>
         <li class="flex items-center">
             <location-icon class="mr-3"/>
