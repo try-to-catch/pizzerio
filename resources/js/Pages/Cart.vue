@@ -80,7 +80,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head><title>Home</title></Head>
+    <Head><title>Cart</title></Head>
 
     <main-layout ref="mainLayout" :user="auth.user" class="bg-gray-bg">
         <div v-if="order.products.length" class="pt-5 sm:py-10 pb-0">
