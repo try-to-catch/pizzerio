@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Resources\User\UserMinResource;
 use App\Models\Cart;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -41,8 +42,14 @@ class HandleInertiaRequests extends Middleware
             }])
             ->firstOrCreate(['session_id' => session()->getId()]);
 
+        $categories = Category::query()
+            ->lastSeven()
+            ->get(['id', 'title', 'icon', 'slug']);
+
+
         return array_merge(parent::share($request), [
             'message' => $request->session()->get('message'),
+            'categories' => $categories,
             'auth' => [
                 'user' => $userData,
             ],
