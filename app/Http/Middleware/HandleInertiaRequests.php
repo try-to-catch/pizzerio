@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\Category\CategoryEssentialsResource;
 use App\Http\Resources\User\UserMinResource;
 use App\Models\Cart;
 use App\Models\Category;
@@ -46,10 +47,9 @@ class HandleInertiaRequests extends Middleware
             ->lastSeven()
             ->get(['id', 'title', 'icon', 'slug']);
 
-
         return array_merge(parent::share($request), [
             'message' => $request->session()->get('message'),
-            'categories' => $categories,
+            'categories' => CategoryEssentialsResource::collection($categories)->resolve(),
             'auth' => [
                 'user' => $userData,
             ],

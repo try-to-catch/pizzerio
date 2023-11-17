@@ -14,7 +14,7 @@ class ProductFactory extends Factory
 {
     public function definition(): array
     {
-        $thumbnailPath = storage_path('app/public/images/defaults/nice-pizza.png');
+        $thumbnailPath = public_path('images/nice-pizza.png');
         $thumbnail = new File($thumbnailPath);
 
         $storeThumbnailAction = new StoreThumbnailAction();

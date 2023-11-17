@@ -39,7 +39,7 @@ class OrderController extends Controller
 
     public function thanksForOrder(): Response|RedirectResponse
     {
-        if (Gate::denies('showThanksForOrder')) {
+        if (Gate::allows('showThanksForOrder')) {
             return redirect()->route('home');
         }
         return Inertia::render('ThanksForOrder', ['order_id' => session('last_order_id')]);

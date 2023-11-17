@@ -17,11 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(10)->create();
 
-        Category::factory(10)->create(['user_id' => rand(1, 10)]);
-
-        Product::factory(10)->create([
-            'user_id' => rand(1, 10),
-            'category_id' => rand(1, 10),
-        ]);
+        Category::factory(10)->create(['user_id' => rand(1, 10)])->each(function ($category) {
+            $category->products()->saveMany(Product::factory(10)->make(['user_id' => rand(1, 10)]));
+        });
     }
 }

@@ -9,13 +9,17 @@ import {computed, onMounted, onUnmounted, ref} from "vue";
 import {IResizeEventTarget} from "@/types/IResizeEventTarget";
 import CrossIcon from "@/Components/Icons/CrossIcon.vue";
 import MainFooter from "@/Components/MainFooter.vue";
-import {Link, router} from "@inertiajs/vue3";
+import {Link, router, usePage} from "@inertiajs/vue3";
 import {IUserEssentials} from "@/types/IUserEssentials";
 import UseCart from "@/composables/Cart";
+import {ICategoryEssentials} from "@/types/ICategoryEssentials";
 
 const {user} = defineProps<{ user?: IUserEssentials }>()
 
 const cartInstance = new UseCart()
+
+const {props} = usePage()
+const categories  = props.categories as ICategoryEssentials[]
 
 const isActionListOpen = ref(false)
 const isMenuOpen = ref(false)
@@ -27,7 +31,7 @@ const resizeEvent = (ev) => {
     width.value = window.innerWidth
     height.value = window.innerHeight
 
-    if (target.innerWidth >= 1024) {
+    if (target.innerWidth! >= 1024) {
         isMenuOpen.value = false
     }
 };
@@ -139,29 +143,8 @@ defineExpose({cartInstance, displayMessage})
                                 <li class="px-4 h-full hover:bg-primary hover:text-white">
                                     <a class="h-full w-full flex items-center" href="#">Акции</a>
                                 </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Пицца</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Суши</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Напитки</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Закуски</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Комбо</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Десерты</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Соусы</a>
-                                </li>
-                                <li class="px-4 h-full hover:bg-primary hover:text-white">
-                                    <a class="h-full w-full flex items-center" href="#">Другое</a>
+                                <li class="px-4 h-full hover:bg-primary hover:text-white" v-for="category in categories">
+                                    <Link class="h-full w-full flex items-center" :href="route('categories.show', category.slug)">{{category.title}}</Link>
                                 </li>
                             </ul>
                         </nav>
@@ -239,7 +222,7 @@ defineExpose({cartInstance, displayMessage})
         </transition>
 
         <main :style="{marginTop: headerHeight + 'px'}" class="grow relative">
-            <transition duration="300" mode="in-out" name="fade">
+            <transition :duration="300" mode="in-out" name="fade">
                 <div v-if="isMessageShouldBeDisplayed" :style="{top: headerHeight + 16 +'px'}"
                      class="fixed flex justify-center w-full z-20">
                     <div class="py-3 px-8  text-white bg-primary rounded-full text-sm sm:text-base cursor-pointer"
